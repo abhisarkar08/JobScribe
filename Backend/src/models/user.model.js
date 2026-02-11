@@ -8,11 +8,19 @@ const userSchema = new mongoose.Schema({
     },
     fullName: {
         firstName: { type: String, required: true },
-        lastName: { type: String, required: true }
+        lastName: { type: String }
     }, 
     password: {
         type: String,
-        required: true,
+        required: false,
+    },
+    googleId: {
+        type: String,
+    },
+    provider: {
+        type: String,
+        enum: ['local', 'google'],
+        default: 'local',
     }
 }, { timestamps: true });
 
