@@ -54,8 +54,20 @@ function logout(req, res) {
     res.json({ message: 'Logout successful' });
 }
 
+function deletea(req, res) {
+    user.findByIdAndDelete(req.user.id)
+        .then(() => {
+            res.clearCookie('token');
+            res.json({ message: 'Account deleted successfully' });
+        })
+        .catch((error) => {
+            res.status(500).json({ message: 'Server error' });
+        }); 
+}
+
 module.exports = {
     register,
     login,
     logout,
+    deletea
 };
