@@ -4,7 +4,6 @@ const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const { Strategy: GoogleStrategy } = require('passport-google-oauth20');
 const user = require('./models/user.model');
-
 const app = express();
 
 app.use(express.json());
