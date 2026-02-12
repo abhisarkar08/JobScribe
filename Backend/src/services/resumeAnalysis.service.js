@@ -1,47 +1,98 @@
+// ===============================
+// RESUME ANALYZER - PHASE 1 (STABLE)
+// ===============================
+
 function extractSkillSection(text) {
-  const match = text.match(
-    /technical skills([\s\S]*?)(education|experience|project|$)/i
-  );
+  const lines = text.split("\n").map(l => l.trim());
 
-  if (!match) return [];
+  let capturing = false;
+  let skillsBlock = [];
 
-  const section = match[1];
+  for (let line of lines) {
+    // Start capturing: Skills heading dhundna (e.g., "Skills", "Technical Skills", "Key Skills")
+    if (/^(technical\s+)?skills$|^key\s+skills$/i.test(line)) {
+      capturing = true;
+      continue;
+    }
 
-  const skills = section
-    .split(/,|\n|•|:/)
-    .map(s => s.trim())
-    .filter(s => s.length > 2)
-    .filter(s =>
-      !/languages|tools|technologies|education|experience|project/i.test(s)
-    );
+    // Stop capturing: Jab koi doosri major heading aaye (e.g., "Education", "Experience")
+    if (capturing && /education|experience|projects|achievements|certifications|summary/i.test(line)) {
+      break;
+    }
 
-  return [...new Set(skills)];
+    if (capturing && line.length > 0) {
+      skillsBlock.push(line);
+    }
+  }
+
+  if (!skillsBlock.length) return [];
+
+  let skills = [];
+
+  skillsBlock.forEach(line => {
+    // Case 1: Colon format (e.g., "Languages: Java, Python")
+    if (line.includes(":")) {
+      const rightSide = line.split(":")[1];
+      if (rightSide) {
+        skills.push(...rightSide.split(",").map(s => s.trim()));
+      }
+    }
+    // Case 2: Bullet or Comma format
+    else {
+      const cleaned = line.replace(/^[•\-\*]\s*/, ""); // Bullets hatana
+      skills.push(...cleaned.split(",").map(s => s.trim()));
+    }
+  });
+
+  return [...new Set(
+    skills.filter(s =>
+      s.length > 1 &&
+      !/\d{4}/.test(s) &&
+      !s.includes("@") &&
+      !/github|linkedin|http/i.test(s)
+    )
+  )];
 }
 
 function extractEmail(text) {
-  const match = text.match(/\S+@\S+\.\S+/);
+  const match = text.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
   return match ? match[0] : null;
 }
 
 function extractPhone(text) {
-  const match = text.match(/\+?\d[\d -]{8,12}\d/);
-  return match ? match[0] : null;
+  const match = text.match(/(?:\+?\d{1,3}[- ]?)?\(?\d{2,5}\)?[- ]?\d{2,5}[- ]?\d{2,5}[- ]?\d{2,5}/);
+  return match ? match[0].trim() : null;
 }
 
+// 🔥 IMPROVED: Ab ye "Work Experience" ya "Academic Education" ko bhi pakad lega
 function hasSection(text, sectionName) {
-  const regex = new RegExp(sectionName, "i");
-  return regex.test(text);
+  const patterns = {
+    education: /education|academic|qualification|schooling/i,
+    project: /projects?|personal work|portfolio/i,
+    experience: /experience|employment|work history|internship/i
+  };
+
+  const regex = patterns[sectionName.toLowerCase()];
+  return regex ? regex.test(text) : false;
 }
 
 function calculateScore({ skills, email, phone, text }) {
   let score = 0;
 
-  if (skills.length >= 3) score += 25;
+  // Skills weight (Max 25)
+  if (skills.length >= 8) score += 25;
+  else if (skills.length >= 4) score += 15;
+  else if (skills.length > 0) score += 10;
+
+  // Section presence (Max 75)
   if (hasSection(text, "education")) score += 25;
   if (hasSection(text, "project")) score += 25;
-  if (email && phone) score += 25;
+  if (hasSection(text, "experience")) score += 25;
 
-  return score;
+  // Contact info (Max 10)
+  if (email && phone) score += 10;
+
+  return Math.min(score, 100);
 }
 
 function resumeAnalysis(text) {
@@ -49,24 +100,19 @@ function resumeAnalysis(text) {
   const email = extractEmail(text);
   const phone = extractPhone(text);
 
-  const score = calculateScore({
-    skills,
-    email,
-    phone,
-    text
-  });
+  const sections = {
+    education: hasSection(text, "education"),
+    projects: hasSection(text, "project"),
+    experience: hasSection(text, "experience")
+  };
 
   return {
     skills,
     email,
     phone,
-    sections: {
-      education: hasSection(text, "education"),
-      projects: hasSection(text, "project"),
-      experience: hasSection(text, "experience")
-    },
-    score
+    sections,
+    score: calculateScore({ skills, email, phone, text })
   };
 }
 
-module.exports = { resumeAnalysis };
+module.exports = { resumeAnalysis, calculateScore };

@@ -18,7 +18,9 @@ exports.uploadResume = async (req, res) => {
       .replace(/[ \t]{2,}/g, " ")
       .trim();
 
-    const analysis = resumeAnalysis(extractedText);
+    const { analyzeWithFallback } = require("../services/resumeHybrid.service");
+    const analysis = await analyzeWithFallback(extractedText);
+
 
       const resume = await Resume.create({
         user: req.user.id,
