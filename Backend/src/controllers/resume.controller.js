@@ -1,28 +1,46 @@
-const cloudinary = require("../uploads/cloudinary");
 const fs = require("fs");
+const pdfParse = require("pdf-parse");
+const Resume = require("../models/resume.model");
+const { resumeAnalysis } = require("../services/resumeAnalysis.service");
 
 exports.uploadResume = async (req, res) => {
   try {
-    if (!req.file) {
+    if (!req.file) {  
       return res.status(400).json({ message: "No file uploaded" });
     }
 
-    // Upload to Cloudinary as RAW
-    const result = await cloudinary.uploader.upload(req.file.path, {
-      resource_type: "raw",
-      folder: "resumes",
-    });
+    const fileBuffer = fs.readFileSync(req.file.path);
+    const data = await pdfParse(fileBuffer);
 
-    // Remove file from local storage after upload
+    let extractedText = data.text
+      .replace(/\r\n/g, "\n")
+      .replace(/\n{2,}/g, "\n")
+      .replace(/[ \t]{2,}/g, " ")
+      .trim();
+
+    const analysis = resumeAnalysis(extractedText);
+
+      const resume = await Resume.create({
+        user: req.user.id,
+        originalFileName: req.file.originalname,
+        extractedText,
+        analysis
+      });
+
+
     fs.unlinkSync(req.file.path);
 
     return res.status(200).json({
-      message: "Resume uploaded successfully",
-      fileUrl: result.secure_url,
-      public_id: result.public_id,
+      message: "Resume uploaded & parsed successfully",
+      resumeId: resume._id,
+      analysis: resume.analysis
     });
+
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: "Upload failed" });
+    return res.status(500).json({
+      message: "Resume processing failed",
+      error: error.message,
+    });
   }
 };
