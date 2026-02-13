@@ -83,5 +83,84 @@ async function analyzeJD(jdText) {
   }
 }
 
+async function generateImprovementSuggestions(resumeText, jdText, missingSkills) {
+  const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
-module.exports = { extractSkillsWithAI, analyzeJD };
+  const prompt = `
+  You are a professional resume optimizer.
+
+  Job Description:
+  ${jdText}
+
+  Candidate Resume:
+  ${resumeText}
+
+  Missing Skills:
+  ${missingSkills.join(", ")}
+
+  Suggest:
+  1. Skills to add
+  2. Bullet point improvements
+  3. Section improvements
+  4. ATS keyword improvements
+
+  Return structured JSON.
+  `;
+
+  const result = await model.generateContent(prompt);
+  const text = result.response.text();
+
+  const cleaned = text.replace(/```json|```/g, "").trim();
+  const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
+
+  if (jsonMatch) return JSON.parse(jsonMatch[0]);
+
+  throw new Error("Invalid AI JSON");
+}
+
+async function generateInterviewQuestions(resumeText, jdText) {
+  const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+
+  const prompt = `
+  You are a senior technical interviewer.
+
+  Based on the following Job Description and Candidate Resume,
+  generate interview questions.
+
+  Job Description:
+  ${jdText}
+
+  Candidate Resume:
+  ${resumeText}
+
+  Generate:
+  1. Technical questions (based on JD)
+  2. Questions based on candidate's projects
+  3. Behavioral questions
+  4. Scenario-based problem solving questions
+
+  Return in JSON format:
+  {
+    "technical": [],
+    "projectBased": [],
+    "behavioral": [],
+    "scenario": []
+  }
+
+  No markdown. Only JSON.
+  `;
+
+  const result = await model.generateContent(prompt);
+  const text = result.response.text();
+
+  const cleaned = text.replace(/```json|```/g, "").trim();
+  const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
+
+  if (jsonMatch) return JSON.parse(jsonMatch[0]);
+
+  throw new Error("Invalid AI JSON");
+}
+
+
+module.exports = { extractSkillsWithAI, analyzeJD, generateImprovementSuggestions, generateInterviewQuestions };
+

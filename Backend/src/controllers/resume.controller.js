@@ -2,7 +2,8 @@ const fs = require("fs");
 const pdfParse = require("pdf-parse");
 const Resume = require("../models/resume.model");
 const { resumeAnalysis } = require("../services/resumeAnalysis.service");
-const { analyzeJD } = require("../services/ai.service");
+const { analyzeJD, generateImprovementSuggestions, generateInterviewQuestions } = require("../services/ai.service");
+
 
 
 exports.uploadResume = async (req, res) => {
@@ -165,3 +166,87 @@ exports.matchJDController = async (req, res) => {
   }
 };
 
+exports.improveResumeController = async (req, res) => {
+  try {
+    const { resumeId, jdText } = req.body;
+
+    const resume = await Resume.findOne({
+      _id: resumeId,
+      user: req.user.id
+    });
+
+    if (!resume) {
+      return res.status(404).json({ message: "Resume not found" });
+    }
+
+    const jdAnalysis = await analyzeJD(jdText);
+
+    const jdSkills = [
+      ...(jdAnalysis.requiredSkills || []),
+      ...(jdAnalysis.tools || [])
+    ];
+
+    const resumeSkills = resume.analysis.skills || [];
+
+    const missingSkills = jdSkills.filter(
+      skill =>
+        !resumeSkills
+          .map(s => s.toLowerCase())
+          .includes(skill.toLowerCase())
+    );
+
+    const suggestions = await generateImprovementSuggestions(
+      resume.extractedText,
+      jdText,
+      missingSkills
+    );
+
+    res.json({
+      success: true,
+      suggestions
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Improvement failed" });
+  }
+};
+
+exports.generateInterviewController = async (req, res) => {
+  try {
+    const { resumeId, jdText } = req.body;
+
+    if (!resumeId || !jdText) {
+      return res.status(400).json({
+        message: "resumeId and jdText required"
+      });
+    }
+
+    const resume = await Resume.findOne({
+      _id: resumeId,
+      user: req.user.id
+    });
+
+    if (!resume) {
+      return res.status(404).json({
+        message: "Resume not found"
+      });
+    }
+
+    const questions = await generateInterviewQuestions(
+      resume.extractedText,
+      jdText
+    );
+
+    res.json({
+      success: true,
+      questions
+    });
+
+  } catch (error) {
+    console.error("INTERVIEW GEN ERROR:", error);
+    res.status(500).json({
+      message: "Interview question generation failed"
+    });
+  }
+};
