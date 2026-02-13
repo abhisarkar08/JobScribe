@@ -36,4 +36,52 @@ async function extractSkillsWithAI(resumeText) {
   }
 }
 
-module.exports = { extractSkillsWithAI };
+async function analyzeJD(jdText) {
+  console.log("JD route hit");
+
+  try {
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+
+    const prompt = `
+    Extract the following from the job description and return ONLY valid JSON.
+
+    {
+      "requiredSkills": [],
+      "softSkills": [],
+      "tools": [],
+      "experienceLevel": "",
+      "keywords": []
+    }
+
+    Job Description:
+    ${jdText}
+    `;
+
+    const result = await model.generateContent(prompt);
+    const response = result.response.text();
+
+    console.log("RAW JD AI RESPONSE:", response);
+
+    // ✅ Remove markdown backticks
+    let cleaned = response
+      .replace(/```json/g, "")
+      .replace(/```/g, "")
+      .trim();
+
+    // ✅ Extract only JSON object
+    const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
+
+    if (jsonMatch) {
+      return JSON.parse(jsonMatch[0]);
+    }
+
+    throw new Error("Invalid JSON format from AI");
+
+  } catch (error) {
+    console.error("JD Analysis Error:", error.message);
+    throw error;
+  }
+}
+
+
+module.exports = { extractSkillsWithAI, analyzeJD };

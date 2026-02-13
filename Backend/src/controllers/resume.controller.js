@@ -2,6 +2,8 @@ const fs = require("fs");
 const pdfParse = require("pdf-parse");
 const Resume = require("../models/resume.model");
 const { resumeAnalysis } = require("../services/resumeAnalysis.service");
+const { analyzeJD } = require("../services/ai.service");
+
 
 exports.uploadResume = async (req, res) => {
   try {
@@ -46,3 +48,120 @@ exports.uploadResume = async (req, res) => {
     });
   }
 };
+
+exports.analyzeJDController = async (req, res) => {
+  try {
+    const { jdText } = req.body;
+
+    if (!jdText) {
+      return res.status(400).json({ message: "JD text is required" });
+    }
+
+    const analysis = await analyzeJD(jdText);
+
+    res.status(200).json({
+      success: true,
+      data: analysis
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to analyze JD"
+    });
+  }
+};
+
+exports.getUserResumes = async (req, res) => {
+  try {
+    const resumes = await Resume.find({ user: req.user.id })
+      .select("_id originalFileName analysis.score createdAt")
+      .sort({ createdAt: -1 });
+
+    return res.status(200).json({
+      success: true,
+      resumes
+    });
+
+  } catch (error) {
+    console.error("FETCH RESUMES ERROR:", error);
+    return res.status(500).json({
+      message: "Failed to fetch resumes"
+    });
+  }
+};
+
+exports.matchJDController = async (req, res) => {
+  try {
+    const { resumeId, jdText } = req.body;
+
+    if (!resumeId || !jdText) {
+      return res.status(400).json({
+        message: "resumeId and jdText are required"
+      });
+    }
+
+    // 1️⃣ Resume find karo (sirf current user ka)
+    const resume = await Resume.findOne({
+      _id: resumeId,
+      user: req.user.id
+    });
+
+    if (!resume) {
+      return res.status(404).json({
+        message: "Resume not found"
+      });
+    }
+
+    // 2️⃣ JD AI analysis
+    const jdAnalysis = await analyzeJD(jdText);
+
+    const resumeSkills = resume.analysis?.skills || [];
+    const jdSkills = [
+      ...(jdAnalysis.requiredSkills || []),
+      ...(jdAnalysis.tools || [])
+    ];
+
+
+    // 3️⃣ Smart Normalization function
+    const normalize = (skill) =>
+      skill.toLowerCase().replace(/[^a-z0-9]/g, "");
+
+    const resumeSet = new Set(
+      resumeSkills.map(skill => normalize(skill))
+    );
+
+    const matchedSkills = [];
+    const missingSkills = [];
+
+    jdSkills.forEach(skill => {
+      if (resumeSet.has(normalize(skill))) {
+        matchedSkills.push(skill);
+      } else {
+        missingSkills.push(skill);
+      }
+    });
+
+    const matchPercentage =
+      jdSkills.length === 0
+        ? 0
+        : Math.round((matchedSkills.length / jdSkills.length) * 100);
+
+    return res.status(200).json({
+      success: true,
+      selectedResume: resume.originalFileName,
+      resumeScore: resume.analysis.score,
+      matchPercentage,
+      matchedSkills,
+      missingSkills,
+      totalRequiredSkills: jdSkills.length
+    });
+
+  } catch (error) {
+    console.error("MATCH ERROR:", error);
+    return res.status(500).json({
+      message: "Matching failed"
+    });
+  }
+};
+
