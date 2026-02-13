@@ -1,5 +1,5 @@
 const { resumeAnalysis, calculateScore } = require("./resumeAnalysis.service");
-const { extractSkillsWithAI } = require("./aiParser.service");
+const { extractSkillsWithAI } = require("./ai.service");
 
 async function analyzeWithFallback(text) {
   let analysis = resumeAnalysis(text);
