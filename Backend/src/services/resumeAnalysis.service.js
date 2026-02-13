@@ -3,7 +3,7 @@
 // ===============================
 
 function extractSkillSection(text) {
-  const lines = text.split("\n").map(l => l.trim());
+  const lines = text.split("\n").map((l) => l.trim());
 
   let capturing = false;
   let skillsBlock = [];
@@ -16,7 +16,12 @@ function extractSkillSection(text) {
     }
 
     // Stop capturing: Jab koi doosri major heading aaye (e.g., "Education", "Experience")
-    if (capturing && /education|experience|projects|achievements|certifications|summary/i.test(line)) {
+    if (
+      capturing &&
+      /education|experience|projects|achievements|certifications|summary/i.test(
+        line,
+      )
+    ) {
       break;
     }
 
@@ -29,29 +34,32 @@ function extractSkillSection(text) {
 
   let skills = [];
 
-  skillsBlock.forEach(line => {
+  skillsBlock.forEach((line) => {
     // Case 1: Colon format (e.g., "Languages: Java, Python")
     if (line.includes(":")) {
       const rightSide = line.split(":")[1];
       if (rightSide) {
-        skills.push(...rightSide.split(",").map(s => s.trim()));
+        skills.push(...rightSide.split(",").map((s) => s.trim()));
       }
     }
     // Case 2: Bullet or Comma format
     else {
       const cleaned = line.replace(/^[•\-\*]\s*/, ""); // Bullets hatana
-      skills.push(...cleaned.split(",").map(s => s.trim()));
+      skills.push(...cleaned.split(",").map((s) => s.trim()));
     }
   });
 
-  return [...new Set(
-    skills.filter(s =>
-      s.length > 1 &&
-      !/\d{4}/.test(s) &&
-      !s.includes("@") &&
-      !/github|linkedin|http/i.test(s)
-    )
-  )];
+  return [
+    ...new Set(
+      skills.filter(
+        (s) =>
+          s.length > 1 &&
+          !/\d{4}/.test(s) &&
+          !s.includes("@") &&
+          !/github|linkedin|http/i.test(s),
+      ),
+    ),
+  ];
 }
 
 function extractEmail(text) {
@@ -60,7 +68,9 @@ function extractEmail(text) {
 }
 
 function extractPhone(text) {
-  const match = text.match(/(?:\+?\d{1,3}[- ]?)?\(?\d{2,5}\)?[- ]?\d{2,5}[- ]?\d{2,5}[- ]?\d{2,5}/);
+  const match = text.match(
+    /(?:\+?\d{1,3}[- ]?)?\(?\d{2,5}\)?[- ]?\d{2,5}[- ]?\d{2,5}[- ]?\d{2,5}/,
+  );
   return match ? match[0].trim() : null;
 }
 
@@ -69,7 +79,7 @@ function hasSection(text, sectionName) {
   const patterns = {
     education: /education|academic|qualification|schooling/i,
     project: /projects?|personal work|portfolio/i,
-    experience: /experience|employment|work history|internship/i
+    experience: /experience|employment|work history|internship/i,
   };
 
   const regex = patterns[sectionName.toLowerCase()];
@@ -103,7 +113,7 @@ function resumeAnalysis(text) {
   const sections = {
     education: hasSection(text, "education"),
     projects: hasSection(text, "project"),
-    experience: hasSection(text, "experience")
+    experience: hasSection(text, "experience"),
   };
 
   return {
@@ -111,7 +121,7 @@ function resumeAnalysis(text) {
     email,
     phone,
     sections,
-    score: calculateScore({ skills, email, phone, text })
+    score: calculateScore({ skills, email, phone, text }),
   };
 }
 

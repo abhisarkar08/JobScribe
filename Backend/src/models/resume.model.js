@@ -17,10 +17,10 @@ const resumeSchema = new mongoose.Schema(
     },
     analysis: {
       type: Object,
-      default: {}
-    }
+      default: {},
+    },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 module.exports = mongoose.model("Resume", resumeSchema);

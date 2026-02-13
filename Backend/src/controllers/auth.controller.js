@@ -1,73 +1,87 @@
-const user = require('../models/user.model');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
+const user = require("../models/user.model");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 async function register(req, res) {
-    try {
-        const { fullName: { firstName, lastName }, email, password } = req.body;
-        const existingUser = await user.findOne({ email });
-        if (existingUser) {
-            return res.status(400).json({ message: 'Email already in use' });
-        }
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const newuser = await user.create({ fullName: { firstName, lastName }, email, password: hashedPassword });
-
-        const token = jwt.sign({ id: newuser._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-
-        res.cookie('token', token,{
-            httpOnly: true,
-            secure: false, // Set to true in production
-            sameSite: 'lax',
-        });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Server error' });
+  try {
+    const {
+      fullName: { firstName, lastName },
+      email,
+      password,
+    } = req.body;
+    const existingUser = await user.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: "Email already in use" });
     }
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newuser = await user.create({
+      fullName: { firstName, lastName },
+      email,
+      password: hashedPassword,
+    });
+
+    const token = jwt.sign({ id: newuser._id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: false, // Set to true in production
+      sameSite: "lax",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
 }
 
 async function login(req, res) {
-    try {
-        const { email, password } = req.body;
-        const existingUser =await user.findOne({ email});
-        if(!existingUser){
-            return res.status(400).json({ message: 'Invalid email or password' });
-        }
-        const isPasswordValid = await bcrypt.compare(password, existingUser.password);
-        if (!isPasswordValid) {
-            return res.status(400).json({ message: 'Invalid email or password' });
-        }
-        const token = jwt.sign({ id: existingUser._id }, process.env.JWT_SECRET);
-
-        res.cookie('token', token, {
-            httpOnly: true,
-            secure: false, // Set to true in production
-            sameSite: 'lax',
-        });
-        res.json({ message: 'Login successful' });
-    } catch (error) {
-        res.status(500).json({ message: 'Server error' });
+  try {
+    const { email, password } = req.body;
+    const existingUser = await user.findOne({ email });
+    if (!existingUser) {
+      return res.status(400).json({ message: "Invalid email or password" });
     }
+    const isPasswordValid = await bcrypt.compare(
+      password,
+      existingUser.password,
+    );
+    if (!isPasswordValid) {
+      return res.status(400).json({ message: "Invalid email or password" });
+    }
+    const token = jwt.sign({ id: existingUser._id }, process.env.JWT_SECRET);
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: false, // Set to true in production
+      sameSite: "lax",
+    });
+    res.json({ message: "Login successful" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
 }
 
 function logout(req, res) {
-    res.clearCookie('token');
-    res.json({ message: 'Logout successful' });
+  res.clearCookie("token");
+  res.json({ message: "Logout successful" });
 }
 
 function deletea(req, res) {
-    user.findByIdAndDelete(req.user.id)
-        .then(() => {
-            res.clearCookie('token');
-            res.json({ message: 'Account deleted successfully' });
-        })
-        .catch((error) => {
-            res.status(500).json({ message: 'Server error' });
-        }); 
+  user
+    .findByIdAndDelete(req.user.id)
+    .then(() => {
+      res.clearCookie("token");
+      res.json({ message: "Account deleted successfully" });
+    })
+    .catch((error) => {
+      res.status(500).json({ message: "Server error" });
+    });
 }
 
 module.exports = {
-    register,
-    login,
-    logout,
-    deletea
+  register,
+  login,
+  logout,
+  deletea,
 };

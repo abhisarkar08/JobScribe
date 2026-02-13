@@ -2,13 +2,15 @@ const fs = require("fs");
 const pdfParse = require("pdf-parse");
 const Resume = require("../models/resume.model");
 const { resumeAnalysis } = require("../services/resumeAnalysis.service");
-const { analyzeJD, generateImprovementSuggestions, generateInterviewQuestions } = require("../services/ai.service");
-
-
+const {
+  analyzeJD,
+  generateImprovementSuggestions,
+  generateInterviewQuestions,
+} = require("../services/ai.service");
 
 exports.uploadResume = async (req, res) => {
   try {
-    if (!req.file) {  
+    if (!req.file) {
       return res.status(400).json({ message: "No file uploaded" });
     }
 
@@ -24,23 +26,20 @@ exports.uploadResume = async (req, res) => {
     const { analyzeWithFallback } = require("../services/resumeHybrid.service");
     const analysis = await analyzeWithFallback(extractedText);
 
-
-      const resume = await Resume.create({
-        user: req.user.id,
-        originalFileName: req.file.originalname,
-        extractedText,
-        analysis
-      });
-
+    const resume = await Resume.create({
+      user: req.user.id,
+      originalFileName: req.file.originalname,
+      extractedText,
+      analysis,
+    });
 
     fs.unlinkSync(req.file.path);
 
     return res.status(200).json({
       message: "Resume uploaded & parsed successfully",
       resumeId: resume._id,
-      analysis: resume.analysis
+      analysis: resume.analysis,
     });
-
   } catch (error) {
     console.error(error);
     return res.status(500).json({
@@ -62,13 +61,12 @@ exports.analyzeJDController = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      data: analysis
+      data: analysis,
     });
-
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Failed to analyze JD"
+      message: "Failed to analyze JD",
     });
   }
 };
@@ -81,13 +79,12 @@ exports.getUserResumes = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      resumes
+      resumes,
     });
-
   } catch (error) {
     console.error("FETCH RESUMES ERROR:", error);
     return res.status(500).json({
-      message: "Failed to fetch resumes"
+      message: "Failed to fetch resumes",
     });
   }
 };
@@ -98,19 +95,19 @@ exports.matchJDController = async (req, res) => {
 
     if (!resumeId || !jdText) {
       return res.status(400).json({
-        message: "resumeId and jdText are required"
+        message: "resumeId and jdText are required",
       });
     }
 
     // 1️⃣ Resume find karo (sirf current user ka)
     const resume = await Resume.findOne({
       _id: resumeId,
-      user: req.user.id
+      user: req.user.id,
     });
 
     if (!resume) {
       return res.status(404).json({
-        message: "Resume not found"
+        message: "Resume not found",
       });
     }
 
@@ -120,22 +117,18 @@ exports.matchJDController = async (req, res) => {
     const resumeSkills = resume.analysis?.skills || [];
     const jdSkills = [
       ...(jdAnalysis.requiredSkills || []),
-      ...(jdAnalysis.tools || [])
+      ...(jdAnalysis.tools || []),
     ];
 
-
     // 3️⃣ Smart Normalization function
-    const normalize = (skill) =>
-      skill.toLowerCase().replace(/[^a-z0-9]/g, "");
+    const normalize = (skill) => skill.toLowerCase().replace(/[^a-z0-9]/g, "");
 
-    const resumeSet = new Set(
-      resumeSkills.map(skill => normalize(skill))
-    );
+    const resumeSet = new Set(resumeSkills.map((skill) => normalize(skill)));
 
     const matchedSkills = [];
     const missingSkills = [];
 
-    jdSkills.forEach(skill => {
+    jdSkills.forEach((skill) => {
       if (resumeSet.has(normalize(skill))) {
         matchedSkills.push(skill);
       } else {
@@ -155,13 +148,12 @@ exports.matchJDController = async (req, res) => {
       matchPercentage,
       matchedSkills,
       missingSkills,
-      totalRequiredSkills: jdSkills.length
+      totalRequiredSkills: jdSkills.length,
     });
-
   } catch (error) {
     console.error("MATCH ERROR:", error);
     return res.status(500).json({
-      message: "Matching failed"
+      message: "Matching failed",
     });
   }
 };
@@ -172,7 +164,7 @@ exports.improveResumeController = async (req, res) => {
 
     const resume = await Resume.findOne({
       _id: resumeId,
-      user: req.user.id
+      user: req.user.id,
     });
 
     if (!resume) {
@@ -183,29 +175,26 @@ exports.improveResumeController = async (req, res) => {
 
     const jdSkills = [
       ...(jdAnalysis.requiredSkills || []),
-      ...(jdAnalysis.tools || [])
+      ...(jdAnalysis.tools || []),
     ];
 
     const resumeSkills = resume.analysis.skills || [];
 
     const missingSkills = jdSkills.filter(
-      skill =>
-        !resumeSkills
-          .map(s => s.toLowerCase())
-          .includes(skill.toLowerCase())
+      (skill) =>
+        !resumeSkills.map((s) => s.toLowerCase()).includes(skill.toLowerCase()),
     );
 
     const suggestions = await generateImprovementSuggestions(
       resume.extractedText,
       jdText,
-      missingSkills
+      missingSkills,
     );
 
     res.json({
       success: true,
-      suggestions
+      suggestions,
     });
-
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Improvement failed" });
@@ -218,35 +207,34 @@ exports.generateInterviewController = async (req, res) => {
 
     if (!resumeId || !jdText) {
       return res.status(400).json({
-        message: "resumeId and jdText required"
+        message: "resumeId and jdText required",
       });
     }
 
     const resume = await Resume.findOne({
       _id: resumeId,
-      user: req.user.id
+      user: req.user.id,
     });
 
     if (!resume) {
       return res.status(404).json({
-        message: "Resume not found"
+        message: "Resume not found",
       });
     }
 
     const questions = await generateInterviewQuestions(
       resume.extractedText,
-      jdText
+      jdText,
     );
 
     res.json({
       success: true,
-      questions
+      questions,
     });
-
   } catch (error) {
     console.error("INTERVIEW GEN ERROR:", error);
     res.status(500).json({
-      message: "Interview question generation failed"
+      message: "Interview question generation failed",
     });
   }
 };
