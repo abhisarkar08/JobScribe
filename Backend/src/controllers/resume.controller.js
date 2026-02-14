@@ -2,6 +2,7 @@ const fs = require("fs");
 const pdfParse = require("pdf-parse");
 const Resume = require("../models/resume.model");
 const { resumeAnalysis } = require("../services/resumeAnalysis.service");
+const JobMatch = require("../models/jobMatch.model");
 const {
   analyzeJD,
   generateImprovementSuggestions,
@@ -99,7 +100,6 @@ exports.matchJDController = async (req, res) => {
       });
     }
 
-    // 1️⃣ Resume find karo (sirf current user ka)
     const resume = await Resume.findOne({
       _id: resumeId,
       user: req.user.id,
@@ -111,7 +111,6 @@ exports.matchJDController = async (req, res) => {
       });
     }
 
-    // 2️⃣ JD AI analysis
     const jdAnalysis = await analyzeJD(jdText);
 
     const resumeSkills = resume.analysis?.skills || [];
@@ -120,10 +119,12 @@ exports.matchJDController = async (req, res) => {
       ...(jdAnalysis.tools || []),
     ];
 
-    // 3️⃣ Smart Normalization function
-    const normalize = (skill) => skill.toLowerCase().replace(/[^a-z0-9]/g, "");
+    const normalize = (skill) =>
+      skill.toLowerCase().replace(/[^a-z0-9]/g, "");
 
-    const resumeSet = new Set(resumeSkills.map((skill) => normalize(skill)));
+    const resumeSet = new Set(
+      resumeSkills.map((skill) => normalize(skill))
+    );
 
     const matchedSkills = [];
     const missingSkills = [];
@@ -139,7 +140,19 @@ exports.matchJDController = async (req, res) => {
     const matchPercentage =
       jdSkills.length === 0
         ? 0
-        : Math.round((matchedSkills.length / jdSkills.length) * 100);
+        : Math.round(
+            (matchedSkills.length / jdSkills.length) * 100
+          );
+
+    // ✅ SAVE MATCH RESULT
+    await JobMatch.create({
+      user: req.user.id,
+      resume: resume._id,
+      jobTitle: jdAnalysis.jobTitle || "Custom JD",
+      matchScore: matchPercentage,
+      matchedSkills,
+      missingSkills,
+    });
 
     return res.status(200).json({
       success: true,

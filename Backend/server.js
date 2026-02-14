@@ -5,6 +5,7 @@ const connectDB = require("./src/db/db");
 const authRoutes = require("./src/routes/auth.routes");
 const cookieParser = require("cookie-parser");
 const resumeRoutes = require("./src/routes/resume.routes");
+const dashboardRoutes = require("./src/routes/dashboard.routes");
 
 connectDB();
 
@@ -12,6 +13,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use("/api/auth", authRoutes);
 app.use("/api/resume", resumeRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 
 app.listen(3000, () => {
   console.log("Server is running on port 3000");
