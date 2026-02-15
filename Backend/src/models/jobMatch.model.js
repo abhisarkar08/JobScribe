@@ -23,7 +23,7 @@ const jobMatchSchema = new mongoose.Schema(
     matchedSkills: [String],
     missingSkills: [String],
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 module.exports = mongoose.model("JobMatch", jobMatchSchema);

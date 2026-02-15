@@ -93,9 +93,7 @@ exports.getDashboardData = async (userId) => {
 
     // -------- Interview Readiness --------
 
-    const interviewReadiness = Math.round(
-      (avgResumeScore + avgMatch) / 2
-    );
+    const interviewReadiness = Math.round((avgResumeScore + avgMatch) / 2);
 
     return {
       overview: {

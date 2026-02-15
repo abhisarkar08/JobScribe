@@ -2,9 +2,7 @@ const dashboardService = require("../services/dashboard.service");
 
 exports.getDashboard = async (req, res) => {
   try {
-    const data = await dashboardService.getDashboardData(
-      req.user.id
-    );
+    const data = await dashboardService.getDashboardData(req.user.id);
     res.status(200).json(data);
   } catch (error) {
     console.error("DASHBOARD ERROR:", error);
