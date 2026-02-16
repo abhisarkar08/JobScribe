@@ -1,5 +1,123 @@
-.navBar{
-    height: auto;
-    width: 100%;
-    background-color: #f0f0f0;
+.navBar {
+  width: 100%;
+  min-height: 4.5rem;
+  padding: 0 6%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  position: sticky;
+  top: 0;
+  z-index: 100;
+
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(0.6rem);
+  border-bottom: 0.08rem solid rgba(0, 0, 0, 0.06);
+}
+
+/* ---------- LEFT ---------- */
+
+.navRight {
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+}
+
+.Logs {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.logo {
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 0.6rem;
+
+  background: linear-gradient(
+    135deg,
+    #6366f1,
+    #22d3ee
+  );
+}
+
+.name {
+  font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+/* ---------- NAV LINKS ---------- */
+
+.rest {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.rest a {
+  position: relative;
+  font-size: 1rem;
+  font-weight: 500; 
+  color: #1f2937;
+  text-decoration: none;
+  opacity: 0.8;
+  transition: opacity 0.2s ease;
+}
+
+.rest a:hover {
+  opacity: 1;
+}
+
+/* underline animation */
+.rest a::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -0.3rem;
+  width: 0%;
+  height: 0.12rem;
+  background: linear-gradient(90deg, #6366f1, #22d3ee);
+  transition: width 0.25s ease;
+}
+
+.rest a:hover::after {
+  width: 100%;
+}
+
+/* ---------- CTA ---------- */
+
+.getStarted {
+  padding: 0.65em 1.6em;
+  border-radius: 2rem;
+
+  font-size: 0.95rem;
+  font-weight: 500;
+  text-decoration: none;
+
+  color: #fff;
+  background: linear-gradient(
+    135deg,
+    #6366f1,
+    #22d3ee
+  );
+
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.getStarted:hover {
+  transform: translateY(-0.15rem);
+  box-shadow: 0 0.6rem 1.5rem rgba(99, 102, 241, 0.35);
+}
+
+/* ---------- RESPONSIVE ---------- */
+
+@media (max-width: 48rem) {
+  .rest {
+    display: none;
+  }
+
+  .navBar {
+    padding: 0 5%;
+  }
 }

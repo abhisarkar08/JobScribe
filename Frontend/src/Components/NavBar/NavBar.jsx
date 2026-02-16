@@ -1,5 +1,8 @@
 import React from 'react'
 import styles from './NavBar.module.css'
+import { NavLink } from 'react-router-dom'
+import { HashLink } from 'react-router-hash-link'
+
 const NavBar = () => {
   return (
     <div className={styles.navBar}>
@@ -8,14 +11,18 @@ const NavBar = () => {
           <div className={styles.logo}></div>
           <div className={styles.name}>JobScribe</div>
         </div>
+
         <div className={styles.rest}>
-          <NavLinks>Home</NavLinks>
-          <NavLinks>About</NavLinks>
-          <NavLinks>Features</NavLinks>
+          <HashLink smooth to="/#home">Home</HashLink>
+          <HashLink smooth to="/#features">Features</HashLink>
+          <HashLink smooth to="/#about">About</HashLink>
         </div>
       </div>
+
       <div className={styles.navLeft}>
-        <button className={styles.getStarted}>Get Started</button>
+        <NavLink to="/register" className={styles.getStarted}>
+          Get Started
+        </NavLink>
       </div>
     </div>
   )
