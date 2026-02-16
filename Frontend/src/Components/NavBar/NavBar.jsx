@@ -8,7 +8,9 @@ const NavBar = () => {
     <div className={styles.navBar}>
       <div className={styles.navRight}>
         <div className={styles.Logs}>
-          <div className={styles.logo}></div>
+          <div className={styles.logo}>
+            <img src="/logo.png" alt="Logo" />
+          </div>
           <div className={styles.name}>JobScribe</div>
         </div>
 
