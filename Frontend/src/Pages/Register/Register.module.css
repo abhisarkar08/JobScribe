@@ -1,0 +1,39 @@
+.page {
+    position: relative;
+    height: 100vh;
+    background: #f8f6ef; /* light cream */
+    overflow: hidden;
+}
+
+/* common bg style */
+.bg {
+    position: absolute;
+    opacity: 0.9;
+}
+
+/* alag-alag placement */
+.i1 {
+    top: 15%;
+    left: 8%;
+    width: 120px;
+}
+
+.i2 {
+    bottom: 20%;
+    left: 15%;
+    width: 150px;
+}
+
+.i3 {
+    right: 10%;
+    bottom: 15%;
+    width: 220px;
+}
+
+.register{
+    height:min(60vh, 467px);
+    width: min(80vw, 768px);
+    margin: auto;
+    background-color: blue;
+    transform: translateY(30%);
+}
