@@ -1,0 +1,124 @@
+.userDash {
+  min-height: 100vh;
+  background-image: url("/background.svg");
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-size: cover;
+
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+/* wrapper so content stays centered */
+.wrapper {
+  width: 100%;
+  max-width: 75rem;
+  padding: 4rem 1.5rem;
+}
+
+/* ---------- HERO ---------- */
+.hero {
+  text-align: center;
+  color: #fff;
+  margin-bottom: 4rem;
+}
+
+.hero h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+}
+
+.hero p {
+  font-size: 1rem;
+  opacity: 0.9;
+  margin-bottom: 2rem;
+}
+
+.heroBtn {
+  padding: 0.9rem 2rem;
+  border-radius: 0.75rem;
+  border: none;
+  background: #1e63e9;
+  color: #fff;
+  font-size: 1.1rem;
+  cursor: pointer;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+}
+
+/* ---------- CARDS ---------- */
+.cards {
+  display: grid;
+  gap: 1.5rem;
+}
+
+/* card base */
+.card {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 2rem;
+  border-radius: 1.25rem;
+  text-align: center;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.18);
+}
+
+.card h3 {
+  font-size: 1.3rem;
+  margin-bottom: 0.5rem;
+  color: #1f2937;
+}
+
+.card p {
+  font-size: 0.98rem;
+  color: #4b5563;
+  margin-bottom: 1.5rem;
+}
+
+.card button {
+  padding: 0.6rem 1.6rem;
+  border-radius: 0.6rem;
+  border: none;
+  background: #2563eb;
+  color: #fff;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+/* middle highlighted card */
+.highlight {
+  background: linear-gradient(180deg, #fff7ed, #ffedd5);
+}
+
+.highlight button {
+  background: #fb923c;
+}
+
+.cardImg {
+  height: 7rem;
+  width: 8rem;
+  transform: translateY(-0.5rem);
+}
+
+.card {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.card:hover {
+  transform: translateY(-6px);
+}
+
+.card:hover .cardImg {
+  transform: translateY(-0.8rem);
+}
+
+
+/* ---------- RESPONSIVE ---------- */
+@media (min-width: 48em) {
+  .hero h1 {
+    font-size: 2.6rem;
+  }
+
+  .cards {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

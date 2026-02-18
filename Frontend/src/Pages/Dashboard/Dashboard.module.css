@@ -1,0 +1,154 @@
+/* PAGE BACKGROUND */
+.page {
+  min-height: 100vh;
+  padding: 2.5rem;
+
+  background:
+    radial-gradient(circle at top left, #e0f2fe, #f8fafc 40%),
+    radial-gradient(circle at bottom right, #dcfce7, #f8fafc 45%);
+}
+
+/* TOP STATS */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+}
+
+.statCard {
+  background: #ffffff;
+  padding: 1.5rem;
+  border-radius: 1.1rem;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+}
+
+.statCard p {
+  font-size: 0.9rem;
+  color: #64748b;
+}
+
+.statCard h2 {
+  margin-top: 0.4rem;
+  font-size: 1.8rem;
+}
+
+/* GRID */
+.grid {
+  margin-top: 2rem;
+  display: grid;
+  grid-template-columns: 2fr 1.2fr 1fr;
+  gap: 1.5rem;
+}
+
+/* CARD */
+.card {
+  background: #ffffff;
+  padding: 1.6rem;
+  border-radius: 1.4rem;
+  box-shadow:
+    0 20px 45px rgba(0,0,0,0.08),
+    inset 0 0 0.5px rgba(255,255,255,0.4);
+}
+
+.card h3 {
+  margin-bottom: 1rem;
+}
+
+/* CHART */
+.chart {
+  width: 100%;
+  height: 16rem;
+}
+
+/* SKILLS */
+.skillRow {
+  margin-bottom: 0.9rem;
+}
+
+.bar {
+  margin-top: 0.3rem;
+  height: 0.45rem;
+  background: #e5e7eb;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.bar span {
+  display: block;
+  height: 100%;
+  background: #22c55e;
+}
+
+/* RADIAL */
+.radialWrap {
+  position: relative;
+}
+
+.radialText {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.radialText b {
+  font-size: 1.9rem;
+  color: #22c55e;
+}
+
+.radialText span {
+  font-size: 0.9rem;
+  color: #64748b;
+}
+
+/* RESUMES */
+.resumeGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.resumeCard {
+  background: #f1f5f9;
+  padding: 1rem;
+  border-radius: 0.8rem;
+  font-size: 0.85rem;
+}
+
+/* HEATMAP */
+.heatmap {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
+  gap: 0.8rem;
+}
+
+.heatCell {
+  padding: 1.2rem 0.8rem;
+  border-radius: 0.9rem;
+  text-align: center;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+/* RECENT */
+.matches {
+  list-style: none;
+  padding: 0;
+  font-size: 0.9rem;
+}
+
+.matches li {
+  padding: 0.45rem 0;
+}
+
+/* RESPONSIVE */
+@media (max-width: 64em) {
+  .stats {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

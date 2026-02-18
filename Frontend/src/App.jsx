@@ -11,13 +11,15 @@ function App() {
     location.pathname === '/login' ||
     location.pathname === '/register'
 
+  const showFooter = location.pathname === '/'
+
   return (
     <div className={Style.app}>
       {!hideLayout && <NavBar />}
 
       <Mainroutes />
 
-      {!hideLayout && <Footer />}
+      {showFooter && <Footer />}
     </div>
   )
 }

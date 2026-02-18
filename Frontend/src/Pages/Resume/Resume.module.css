@@ -1,0 +1,207 @@
+.page {
+  min-height: 100vh;
+
+  background-image: url("/reba.svg");
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-size: cover;
+
+  display: flex;
+  justify-content: center;
+}
+
+
+.container {
+  width: 100%;
+  max-width: 80rem;
+  padding: 3rem 2rem;
+  display: grid;
+  gap: 2rem;
+}
+
+/* ---------- LEFT ---------- */
+.left h1 {
+  font-size: 2.2rem;
+  color: #0f172a;
+}
+
+.left p {
+  margin-top: 0.5rem;
+  color: #475569;
+}
+
+.left p span {
+  color: #2563eb;
+  font-weight: 600;
+}
+
+.uploadCard {
+  margin-top: 2rem;
+  background: #f7f7f7;
+  padding: 2rem;
+  border-radius: 1.25rem;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+}
+
+.uploadCard h3 {
+  margin-bottom: 1rem;
+}
+
+.dropBox {
+  border: 2px dashed #c7d2fe;
+  border-radius: 1rem;
+  padding: 2rem;
+  text-align: center;
+  margin-bottom: 1.2rem;
+}
+.dropBox span {
+  color: #64748b;
+  font-size: 1.2rem;
+}
+
+.chooseBtn {
+  display: inline-block;
+  margin-top: 0.75rem;
+  padding: 0.6rem 1.6rem;
+  background: #2563eb;
+  color: #f7f7f7;
+  border-radius: 0.5rem;
+  cursor: pointer;
+}
+
+.dropBox small {
+  display: block;
+  margin-top: 0.75rem;
+  color: #64748b;
+}
+
+.fileRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.fileName {
+  max-width: 70%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fileActions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.success {
+  color: #16a34a;
+  font-size: 0.85rem;
+}
+
+.deleteBtn {
+  border: none;
+  background: transparent;
+  color: #ef4444;
+  font-size: 1rem;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0.1rem 0.3rem;
+}
+
+.deleteBtn:hover {
+  color: #dc2626;
+}
+
+.success {
+  color: #16a34a;
+}
+
+.generateBtn {
+  width: 100%;
+  padding: 0.9rem;
+  background: linear-gradient(90deg, #2563eb, #3b82f6);
+  color: #f7f7f7;
+  border: none;
+  border-radius: 0.7rem;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.tip {
+  margin-top: 1rem;
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+/* ---------- RIGHT ---------- */
+.reportCard {
+  background: #f7f7f7;
+  padding: 2rem;
+  border-radius: 1.25rem;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+}
+
+.scoreBox {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.scoreCircle {
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: 50%;
+  background: conic-gradient(#22c55e 85%, #e5e7eb 0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.3rem;
+}
+
+.breakdown div {
+  margin-bottom: 0.8rem;
+}
+
+.bar {
+  height: 0.45rem;
+  background: #e5e7eb;
+  border-radius: 999px;
+}
+
+.bar span {
+  display: block;
+  height: 100%;
+  width: 70%;
+  background: #22c55e;
+  border-radius: 999px;
+}
+
+.skills h4 {
+  margin: 1.2rem 0 0.6rem;
+}
+
+.skillTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.skillTags span {
+  background: #eff6ff;
+  color: #2563eb;
+  padding: 0.3rem 0.8rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+}
+
+/* ---------- RESPONSIVE ---------- */
+@media (min-width: 48em) {
+  .container {
+    grid-template-columns: 1.2fr 0.8fr;
+  }
+}

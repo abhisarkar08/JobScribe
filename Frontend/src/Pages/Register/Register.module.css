@@ -1,53 +1,22 @@
 .page {
   position: relative;
   min-height: 100vh;
-  background: #f8f6ef;
-  display: flex;                 /* 👈 main fix */
-  align-items: center;           /* vertical center */
-  justify-content: center;       /* horizontal center */
+
+  /* 👇 background */
+  background-color: #f8f6ef;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' version='1.1' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns:svgjs='http://svgjs.dev/svgjs' width='1440' height='560' preserveAspectRatio='none' viewBox='0 0 1440 560'%3e%3cg mask='url(%26quot%3b%23SvgjsMask1000%26quot%3b)' fill='none'%3e%3crect width='1440' height='560' x='0' y='0' fill='%230e2a47'%3e%3c/rect%3e%3cpath d='M 0%2c53 C 57.6%2c89.8 172.8%2c235.6 288%2c237 C 403.2%2c238.4 460.8%2c75 576%2c60 C 691.2%2c45 748.8%2c148.4 864%2c162 C 979.2%2c175.6 1036.8%2c130.2 1152%2c128 C 1267.2%2c125.8 1382.4%2c146.4 1440%2c151L1440 560L0 560z' fill='%23184a7e'%3e%3c/path%3e%3cpath d='M 0%2c394 C 96%2c422.4 288%2c546.8 480%2c536 C 672%2c525.2 768%2c361.6 960%2c340 C 1152%2c318.4 1344%2c410.4 1440%2c428L1440 560L0 560z' fill='%232264ab'%3e%3c/path%3e%3c/g%3e%3cdefs%3e%3cmask id='SvgjsMask1000'%3e%3crect width='1440' height='560' fill='white'%3e%3c/rect%3e%3c/mask%3e%3c/defs%3e%3c/svg%3e");
+
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center bottom;
+
+  /* 👇 layout */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   padding: 2rem 0;
   overflow-x: hidden;
-}
-
-/* ===================== */
-/* DECORATIVE BG IMAGES  */
-/* ===================== */
-
-/* hidden by default (mobile + tablet) */
-.bg {
-  display: none;
-  position: absolute;
-  opacity: 0.95;
-  pointer-events: none;
-  z-index: 1;
-}
-
-/* show only on >=1024px */
-@media (min-width: 64em) {
-  .bg {
-    display: block;
-  }
-
-  .i1 {
-    top: 6vh;
-    left: 6vw;
-    width: clamp(90px, 18vw, 140px);
-    height: auto;
-  }
-
-  .i2 {
-    bottom: 5vh;
-    left: 8vw;
-    width: clamp(100px, 20vw, 150px);
-    height: auto;
-  }
-
-  .i3 {
-    right: 8vw;
-    bottom: 6vh;
-    width: clamp(120px, 24vw, 200px);
-    height: auto;
-  }
 }
 
 /* ===================== */
@@ -87,7 +56,7 @@
   max-width: 80%;
   height: auto;
   margin: 0 auto;
-  display: block;
+  display: none;
 }
 
 /* ===================== */
@@ -130,6 +99,11 @@
   cursor: pointer;
 }
 
+.googleBtn img {
+  width: 20px;
+  height: 20px;
+}
+
 .createBtn {
   background: #3a7bd5;
   color: white;
@@ -165,6 +139,12 @@ input {
   border-radius: 0.5rem;
   border: 1px solid #ccc;
 }
+.right form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
 
 /* ===================== */
 /* FOOTER TEXT           */
@@ -202,6 +182,7 @@ input {
   }
 
   .left img {
+    display: block;
     max-width: 100%;
   }
 

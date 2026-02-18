@@ -1,48 +1,103 @@
-import React from 'react'
+import { useState } from "react";
 import styles from './Register.module.css'
+import { useNavigate } from "react-router-dom";
 
 const Register = () => {
+  const navig = useNavigate();
+
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: ""
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("Form Data:", formData);
+  };
+
   return (
     <div className={styles.page}>
-      <img src="img1.svg" className={`${styles.bg} ${styles.i1}`}></img>
-      <img src="img2.svg" className={`${styles.bg} ${styles.i2}`}></img>
-      <img src="img3.svg" className={`${styles.bg} ${styles.i3}`}></img>
       <div className={styles.register}>
         {/* Left Section */}
         <div className={styles.left}>
-          <h2>Find 3D Objects, Mockups<br />and Illustrations here</h2>
-          <img src="/register-illustration.png" alt="illustration" />
+          <h2>
+            Optimize Your Resume
+            <br />
+            Beat the ATS with Confidence
+          </h2>
+          <img src="/illus.png" alt="illustration" />
         </div>
 
         {/* Right Section */}
         <div className={styles.right}>
           <h2>Create Account</h2>
 
-          <button className={styles.googleBtn}>
-            <img src="/google.svg" alt="google" />
-            Sign up with Google
-          </button>
+          {/* 👇 FORM starts here but UI flow same */}
+          <form onSubmit={handleSubmit}>
+            <button type="button" className={styles.googleBtn}>
+              <img src="/google.jpg" alt="google" />
+              Sign up with Google
+            </button>
 
-          <div className={styles.or}>— OR —</div>
+            <div className={styles.or}>— OR —</div>
 
-          <div className={styles.nameRow}>
-            <input type="text" placeholder="First Name" />
-            <input type="text" placeholder="Last Name" />
-          </div>
+            <div className={styles.nameRow}>
+              <input
+                type="text"
+                name="firstName"
+                placeholder="First Name"
+                value={formData.firstName}
+                onChange={handleChange}
+              />
+              <input
+                type="text"
+                name="lastName"
+                placeholder="Last Name"
+                value={formData.lastName}
+                onChange={handleChange}
+              />
+            </div>
 
-          <input type="email" placeholder="Email Address" />
-          <input type="password" placeholder="Password" />
+            <input
+              type="email"
+              name="email"
+              placeholder="Email Address"
+              value={formData.email}
+              onChange={handleChange}
+            />
 
-          <button className={styles.createBtn}>Create Account</button>
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              value={formData.password}
+              onChange={handleChange}
+            />
+
+            <button type="submit" className={styles.createBtn}>
+              Create Account
+            </button>
+          </form>
+          {/* 👆 FORM end */}
 
           <p className={styles.loginText}>
-            Already have an account? <span>Log in</span>
+            Already have an account?{" "}
+            <span onClick={() => navig('/login')}>Log in</span>
           </p>
         </div>
       </div>
-
     </div>
-  )
-}
+  );
+};
 
-export default Register
+export default Register;
