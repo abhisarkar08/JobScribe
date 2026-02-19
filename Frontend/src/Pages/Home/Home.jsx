@@ -1,7 +1,41 @@
 import React from 'react'
 import styles from './Home.module.css'
+import { useState } from 'react'
+
+const faqs = [
+  {
+    question: "What is JobScribe?",
+    answer:
+      "JobScribe is a smart resume analysis and job-matching platform that helps you compare your resume with job descriptions and identify skill gaps before applying."
+  },
+  {
+    question: "How does resume analysis work?",
+    answer:
+      "You upload your resume, select or paste a job description, and JobScribe analyzes skills, keywords, and experience to generate a match score and insights."
+  },
+  {
+    question: "Is JobScribe free to use?",
+    answer:
+      "Yes, JobScribe offers a free version with basic resume analysis. Advanced features like detailed skill insights may be part of premium plans."
+  },
+  {
+    question: "Which roles is JobScribe best for?",
+    answer:
+      "JobScribe works best for students, freshers, and early professionals applying for roles like Software Developer, Frontend, Backend, Data Analyst, and more."
+  },
+  {
+    question: "Will JobScribe help me get interview-ready?",
+    answer:
+      "Yes. JobScribe highlights missing skills, weak areas, and improvements needed so you can focus on the right preparation before interviews."
+  }
+];
 
 const Home = () => {
+  const [openIndex, setOpenIndex] = useState(null);
+
+  const toggleFAQ = (index) => {
+    setOpenIndex(openIndex === index ? null : index);
+  };
   return (
     <div className={styles.home}>
       <div className={styles.section1}>
@@ -52,7 +86,36 @@ const Home = () => {
           </div>
         </div>
       </div>
-      <div className={styles.section4}></div>
+       <div className={styles.section4}>
+          <h2 className={styles.faqTitle}>Frequently Asked Questions</h2>
+          <p className={styles.faqSubtitle}>
+            Find answers to common questions about JobScribe and how it helps you
+            improve your resume and job matches.
+          </p>
+
+          <div className={styles.faqList}>
+            {faqs.map((faq, index) => (
+              <div
+                key={index}
+                className={`${styles.faqItem} ${
+                  openIndex === index ? styles.active : ""
+                }`}
+                onClick={() => toggleFAQ(index)}
+              >
+                <div className={styles.faqQuestion}>
+                  <span>{faq.question}</span>
+                  <span className={styles.icon}>
+                    {openIndex === index ? "−" : "+"}
+                  </span>
+                </div>
+
+                {openIndex === index && (
+                  <p className={styles.faqAnswer}>{faq.answer}</p>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
     </div>
   )
 }
