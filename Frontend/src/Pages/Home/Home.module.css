@@ -1,3 +1,215 @@
-.home{
-    height: 100vh;
+/* =========================
+   HOME WRAPPER
+========================= */
+.home {
+  min-height: 100vh;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* =========================
+   SECTION 1 (HERO)
+========================= */
+.section1 {
+  min-height: 100vh;
+  width: 100%;
+
+  background: #f4f7ff url("/homebac.svg") repeat center;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+
+  padding-top: 8rem;
+  gap: 0.6rem;
+  text-align: center;
+
+  position: relative; /* IMPORTANT for overlapping image */
+}
+
+/* =========================
+   HERO HEADINGS
+========================= */
+.section1 h2 {
+  font-size: 4rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+  line-height: 1.15;
+}
+
+.section1 h4 {
+  font-size: 1rem;
+  color: #4b5563;
+  margin: 0;
+  line-height: 1.6;
+  max-width: 42rem;
+}
+
+.ctaButton {
+  margin-top: 2rem;
+  padding: 0.8rem 2.5rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: #2e78ef;
+  border: none;
+  border-radius: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}   
+/* =========================
+   HERO IMAGE (OVERLAP)
+========================= */
+.section1 img {
+  width: 75rem;
+  max-width: 90%;
+
+  margin-top: 4rem;
+
+  position: absolute;
+  bottom: -70vh; /* 🔥 half image goes into section2 */
+
+  filter: drop-shadow(0 40px 60px rgba(0, 0, 0, 0.15));
+}
+
+/* =========================
+   SECTION 2
+========================= */
+.section2 {
+  min-height: 100vh;
+  width: 100%;
+
+  padding-top: 40vh; /* space for bottom half of image */
+
+  background-color: #ffffff;
+}
+
+/* =========================
+   RESPONSIVE (MOBILE)
+========================= */
+@media (max-width: 768px) {
+  .section1 {
+    padding-top: 6rem;
+  }
+
+  .section1 h2 {
+    font-size: 2.4rem;
+  }
+
+  .section1 h4 {
+    font-size: 0.95rem;
+  }
+
+  .section1 img {
+    width: 100%;
+    bottom: -30vh;
+  }
+
+  .section2 {
+    padding-top: 30vh;
+  }
+}
+
+/* =========================
+   SECTION 3
+========================= */
+.section3 {
+  padding: 6rem 2rem;
+  text-align: center;
+  background-color: #ffffff;
+}
+
+.section3Title {
+  font-size: 3.2rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 1rem;
+}
+
+.section3Subtitle {
+  max-width: 50rem;
+  margin: 0 auto 4rem auto;
+  font-size: 1.1rem;
+  color: #4b5563;
+  line-height: 1.7;
+}
+
+/* =========================
+   FEATURES GRID
+========================= */
+.featuresGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* =========================
+   FEATURE CARD
+========================= */
+.featureCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.featureCard img {
+  width: clamp(6rem, 10vw, 9rem);
+  height: clamp(6rem, 10vw, 9rem);
+  margin-bottom: 1.5rem;
+}
+
+.featureCard h3 {
+  font-size: 1.47rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 0.6rem;
+}
+
+.featureCard p {
+  font-size: 1rem;
+  color: #4b5563;
+  line-height: 1.6;
+  max-width: 18rem;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 900px) {
+  .featuresGrid {
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+
+  .section3Title {
+    font-size: 2.1rem;
+  }
+}
+
+.section4 {
+  position: relative;
+  min-height: 90vh;
+  background-color: #ffffff;
+  overflow: hidden;
+}
+
+/* 🔥 top-to-bottom diagonal layer */
+.section4::before {
+  content: "";
+  position: absolute;
+  top: -20%;
+  left: -10%;
+  width: 120%;
+  height: 60%;
+
+  background-color: #f4f7ff;
+  transform: rotate(-4deg);
+  transform-origin: center;
+
+  z-index: 0;
 }
