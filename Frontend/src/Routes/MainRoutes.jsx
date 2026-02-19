@@ -1,30 +1,35 @@
-import { Route, Routes } from 'react-router-dom'
-import Home from '../pages/Home/Home'
-import Login from '../Pages/Login/Login'
-import Register from '../Pages/Register/Register'
-import User from '../pages/UserDash/UserDash'
-import Resume from '../pages/Resume/Resume'
-import Dashboard from '../pages/Dashboard/Dashboard'
-import JD from '../Pages/JD/JD'
-import Interview from '../Components/Interview/Interview'
-import Improvement from '../Components/Improvement/Improvement'
+import { Routes, Route } from "react-router-dom";
+import { lazy, Suspense } from "react";
+
+/* lazy imports */
+const Home = lazy(() => import("../pages/Home/Home"));
+const Login = lazy(() => import("../Pages/Login/Login"));
+const Register = lazy(() => import("../Pages/Register/Register"));
+const User = lazy(() => import("../pages/UserDash/UserDash"));
+const Resume = lazy(() => import("../pages/Resume/Resume"));
+const Dashboard = lazy(() => import("../Pages/Dashboard/Dashboard"));
+const JD = lazy(() => import("../Pages/JD/JD"));
+const Interview = lazy(() => import("../Components/Interview/Interview"));
+const Improvement = lazy(() => import("../Components/Improvement/Improvement"));
+const Profile = lazy(() => import("../Pages/Profile/Profile"));
 
 const MainRoutes = () => {
   return (
-    <div>
-        <Routes>
-            <Route path="/" element={<Home/>}/>
-            <Route path="/login" element={<Login/>}/>
-            <Route path="/register" element={<Register/>}/>
-            <Route path="/user" element={<User/>}/>
-            <Route path="/resume" element={<Resume/>}/>
-            <Route path="/dashboard" element={<Dashboard/>}/>
-            <Route path="/JD" element={<JD/>}/>
-            <Route path="/JD/interview" element={<Interview/>}/>
-            <Route path="/JD/improvement" element={<Improvement/>}/>
-        </Routes>
-    </div>
-  )
-}
+    <Suspense fallback={<div>Loading...</div>}>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/user" element={<User />} />
+        <Route path="/resume" element={<Resume />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/JD" element={<JD />} />
+        <Route path="/JD/interview" element={<Interview />} />
+        <Route path="/JD/improvement" element={<Improvement />} />
+        <Route path="/profile" element={<Profile />} />
+      </Routes>
+    </Suspense>
+  );
+};
 
-export default MainRoutes
+export default MainRoutes;

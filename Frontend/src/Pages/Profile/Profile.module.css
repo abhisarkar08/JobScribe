@@ -1,0 +1,82 @@
+.profilePage {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-image: url("/probac.svg");
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-size: cover;
+}
+
+.profileCard {
+  width: min(92%, 500px);
+  height: max-content;
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+}
+
+.full {
+  grid-column: span 2;
+}
+
+.field label {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-bottom: 0.3rem;
+}
+
+.field input {
+  width: 100%;
+  padding: 0.7rem;
+  border-radius: 0.5rem;
+  border: 1px solid #d1d5db;
+  font-size: 0.9rem;
+}
+
+.field input:disabled {
+  background: #f3f4f6;
+  cursor: not-allowed;
+}
+
+.buttonRow {
+  margin-top: 1.8rem;
+  text-align: center;
+}
+
+.editBtn {
+  background: #2563eb;
+  color: white;
+}
+
+.saveBtn {
+  background: #16a34a;
+  color: white;
+}
+
+.editBtn,
+.saveBtn {
+  padding: 0.7rem 2rem;
+  border-radius: 0.6rem;
+  border: none;
+  font-size: 0.9rem;
+  cursor: pointer;
+}

@@ -1,74 +1,136 @@
-/* PAGE BACKGROUND */
-.page {
-  min-height: 100vh;
-  padding: 2.5rem;
+/* =========================
+   ROOT TOKENS
+========================= */
+:root {
+  --bg-main: #f4f6fb;
+  --card-bg: #ffffff;
+  --border: #e5e7eb;
 
-  background:
-    radial-gradient(circle at top left, #e0f2fe, #f8fafc 40%),
-    radial-gradient(circle at bottom right, #dcfce7, #f8fafc 45%);
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+
+  --blue: #2563eb;
+  --green: #22c55e;
+  --yellow: #facc15;
+  --red: #ef4444;
+
+  --shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
 }
 
-/* TOP STATS */
+/* =========================
+   PAGE
+========================= */
+.page {
+  min-height: 100vh;
+  padding: 2rem 2rem;
+  color: var(--text-main);
+}
+
+/* =========================
+   STATS GRID
+========================= */
 .stats {
+  max-width: 1200px;
+  margin: 0 auto 2rem;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 1.5rem;
 }
 
+/* 🔥 IMPORTANT: prevents mobile overflow */
+.stats > * {
+  min-width: 0;
+}
+
 .statCard {
-  background: #ffffff;
-  padding: 1.5rem;
-  border-radius: 1.1rem;
-  box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+  background: var(--card-bg);
+  border-radius: 14px;
+  padding: 1.2rem;
+  box-shadow: var(--shadow);
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  flex-wrap: wrap;
+}
+
+.statIcon {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  background: #eef2ff;
+  color: var(--blue);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .statCard p {
-  font-size: 0.9rem;
-  color: #64748b;
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  margin: 0;
 }
 
 .statCard h2 {
-  margin-top: 0.4rem;
-  font-size: 1.8rem;
+  font-size: 1.6rem;
+  margin: 0.2rem 0 0;
 }
 
-/* GRID */
+/* =========================
+   MAIN GRID
+========================= */
 .grid {
-  margin-top: 2rem;
+  max-width: 1200px;
+  margin: auto;
   display: grid;
-  grid-template-columns: 2fr 1.2fr 1fr;
-  gap: 1.5rem;
+  grid-template-columns: 1.9fr 1.1fr 1fr;
+  gap: 1.6rem;
 }
 
-/* CARD */
+/* =========================
+   CARD
+========================= */
 .card {
-  background: #ffffff;
-  padding: 1.6rem;
-  border-radius: 1.4rem;
-  box-shadow:
-    0 20px 45px rgba(0,0,0,0.08),
-    inset 0 0 0.5px rgba(255,255,255,0.4);
+  background: var(--card-bg);
+  border-radius: 14px;
+  padding: 1.4rem;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
 }
 
 .card h3 {
+  font-size: 1rem;
+  font-weight: 600;
   margin-bottom: 1rem;
 }
 
-/* CHART */
-.chart {
-  width: 100%;
-  height: 16rem;
+/* =========================
+   CHART
+========================= */
+.chartCard {
+  min-height: 340px;
 }
 
-/* SKILLS */
+.chart {
+  height: 260px;
+  min-height: 260px;
+}
+
+/* =========================
+   WEAKEST SKILLS
+========================= */
 .skillRow {
-  margin-bottom: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.skillRow span {
+  font-size: 0.85rem;
 }
 
 .bar {
-  margin-top: 0.3rem;
-  height: 0.45rem;
-  background: #e5e7eb;
+  margin-top: 0.35rem;
+  height: 0.55rem;
+  background: #eef2f6;
   border-radius: 999px;
   overflow: hidden;
 }
@@ -76,33 +138,63 @@
 .bar span {
   display: block;
   height: 100%;
-  background: #22c55e;
+  border-radius: 999px;
 }
 
-/* RADIAL */
+/* =========================
+   INTERVIEW READINESS
+========================= */
 .radialWrap {
   position: relative;
+  height: 160px;        /* 🔥 REQUIRED FOR RECHARTS */
+  min-height: 160px;
 }
 
 .radialText {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .radialText b {
-  font-size: 1.9rem;
-  color: #22c55e;
+  font-size: 2.1rem;
+  font-weight: 700;
 }
 
 .radialText span {
-  font-size: 0.9rem;
-  color: #64748b;
+  font-size: 0.85rem;
+  color: var(--text-muted);
 }
 
-/* RESUMES */
+.readinessMeta {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.6rem;
+  text-align: center;
+}
+
+.readinessMeta p {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.readinessMeta b {
+  font-size: 0.95rem;
+}
+
+.readinessHint {
+  margin-top: 1.5rem;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* =========================
+   RESUMES
+========================= */
 .resumeGrid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -110,45 +202,103 @@
 }
 
 .resumeCard {
-  background: #f1f5f9;
+  display: flex;
+  gap: 0.8rem;
+  background: #f9fafb;
+  border: 1px solid var(--border);
+  border-radius: 12px;
   padding: 1rem;
-  border-radius: 0.8rem;
   font-size: 0.85rem;
 }
 
-/* HEATMAP */
+.resumeIcon {
+  width: 34px;
+  min-width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.resumeInfo {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.2rem;
+}
+/* =========================
+   HEATMAP
+========================= */
 .heatmap {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr));
-  gap: 0.8rem;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 0.6rem;
 }
 
 .heatCell {
-  padding: 1.2rem 0.8rem;
-  border-radius: 0.9rem;
-  text-align: center;
-  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* 🔥 yahin se gap aayega */
+  padding: 0.75rem;
+  border-radius: 12px;
+  color: white;
+}
+
+
+.heatCell span {
+  font-size: 0.85rem;
   font-weight: 600;
 }
 
-/* RECENT */
+.heatCell b {
+  font-size: 0.85rem;
+}
+
+/* =========================
+   RECENT MATCHES
+========================= */
 .matches {
   list-style: none;
   padding: 0;
-  font-size: 0.9rem;
+  margin: 0;
 }
 
 .matches li {
-  padding: 0.45rem 0;
+  padding: 0.5rem 0;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
 }
 
-/* RESPONSIVE */
-@media (max-width: 64em) {
+.matches li:last-child {
+  border-bottom: none;
+}
+
+/* =========================
+   RESPONSIVE FIXES
+========================= */
+@media (max-width: 48em) {
+  .page {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
   .stats {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
   }
 
   .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .resumeGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* very small phones (320px) */
+@media (max-width: 22em) {
+  .stats {
     grid-template-columns: 1fr;
   }
 }
