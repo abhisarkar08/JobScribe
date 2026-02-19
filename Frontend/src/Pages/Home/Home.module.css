@@ -314,24 +314,28 @@
 .faqAnswer {
   max-height: 0;
   overflow: hidden;
+
   opacity: 0;
+  transform: translateY(-4px);
 
   margin-top: 0;
-  font-size: 0.95rem;
-  color: #4b5563;
-  line-height: 1.6;
 
-  transition: max-height 0.35s ease,
-              opacity 0.25s ease,
-              margin-top 0.25s ease;
+  transition:
+    max-height 0.4s ease,
+    opacity 0.3s ease,
+    transform 0.3s ease,
+    margin-top 0.3s ease;
 }
+
 
 /* when active */
 .active .faqAnswer {
-  max-height: 200px; /* text ke liye enough */
+  max-height: 300px; /* safe height */
   opacity: 1;
+  transform: translateY(0);
   margin-top: 0.8rem;
 }
+
 
 /* =========================
    RESPONSIVE

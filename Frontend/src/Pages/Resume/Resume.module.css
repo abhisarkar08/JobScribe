@@ -1,7 +1,7 @@
+/* ---------- PAGE ---------- */
 .page {
   min-height: 100vh;
-
-  background-image: url("/reba.svg");
+  background-image: url("/jdba.svg");
   background-repeat: no-repeat;
   background-position: center top;
   background-size: cover;
@@ -10,7 +10,7 @@
   justify-content: center;
 }
 
-
+/* ---------- CONTAINER ---------- */
 .container {
   width: 100%;
   max-width: 80rem;
@@ -35,38 +35,45 @@
   font-weight: 600;
 }
 
+/* ---------- UPLOAD CARD ---------- */
 .uploadCard {
   margin-top: 2rem;
-  background: #f7f7f7;
+  background: #ffffff;
   padding: 2rem;
   border-radius: 1.25rem;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 16px 32px rgba(37, 99, 235, 0.08);
 }
 
 .uploadCard h3 {
   margin-bottom: 1rem;
+  color: #1e40af;
 }
 
+/* ---------- DROP BOX ---------- */
 .dropBox {
-  border: 2px dashed #c7d2fe;
+  border: 2px dashed #93c5fd;
   border-radius: 1rem;
   padding: 2rem;
   text-align: center;
   margin-bottom: 1.2rem;
+  background: #f8fafc;
 }
+
 .dropBox span {
-  color: #64748b;
-  font-size: 1.2rem;
+  color: #475569;
+  font-size: 1.1rem;
 }
 
 .chooseBtn {
   display: inline-block;
   margin-top: 0.75rem;
   padding: 0.6rem 1.6rem;
-  background: #2563eb;
-  color: #f7f7f7;
-  border-radius: 0.5rem;
+  background: linear-gradient(90deg, #2563eb, #1e40af);
+  color: #ffffff;
+  border-radius: 0.6rem;
   cursor: pointer;
+  font-size: 0.95rem;
 }
 
 .dropBox small {
@@ -75,6 +82,7 @@
   color: #64748b;
 }
 
+/* ---------- FILE ROW ---------- */
 .fileRow {
   display: flex;
   justify-content: space-between;
@@ -115,17 +123,14 @@
   color: #dc2626;
 }
 
-.success {
-  color: #16a34a;
-}
-
+/* ---------- GENERATE BUTTON ---------- */
 .generateBtn {
   width: 100%;
   padding: 0.9rem;
-  background: linear-gradient(90deg, #2563eb, #3b82f6);
-  color: #f7f7f7;
+  background: linear-gradient(90deg, #2563eb, #1e40af);
+  color: #ffffff;
   border: none;
-  border-radius: 0.7rem;
+  border-radius: 0.75rem;
   font-size: 1rem;
   cursor: pointer;
 }
@@ -136,14 +141,16 @@
   color: #64748b;
 }
 
-/* ---------- RIGHT ---------- */
+/* ---------- RIGHT REPORT CARD ---------- */
 .reportCard {
-  background: #f7f7f7;
+  background: #ffffff;
   padding: 2rem;
   border-radius: 1.25rem;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 16px 32px rgba(37, 99, 235, 0.08);
 }
 
+/* ---------- SCORE ---------- */
 .scoreBox {
   display: flex;
   align-items: center;
@@ -161,10 +168,12 @@
   justify-content: center;
   font-weight: 700;
   font-size: 1.3rem;
+  color: #0f172a;
 }
 
+/* ---------- BREAKDOWN ---------- */
 .breakdown div {
-  margin-bottom: 0.8rem;
+  margin-bottom: 0.9rem;
 }
 
 .bar {
@@ -177,12 +186,14 @@
   display: block;
   height: 100%;
   width: 70%;
-  background: #22c55e;
+  background: linear-gradient(90deg, #22c55e, #16a34a);
   border-radius: 999px;
 }
 
+/* ---------- SKILLS ---------- */
 .skills h4 {
   margin: 1.2rem 0 0.6rem;
+  color: #0f172a;
 }
 
 .skillTags {
