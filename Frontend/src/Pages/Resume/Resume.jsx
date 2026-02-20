@@ -1,14 +1,33 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import styles from "./Resume.module.css";
+import { JobContext } from "../../Context/JobContext";
 
 const Resume = () => {
-  const [file, setFile] = useState(null);
+  const { resumeData, setResumeData } = useContext(JobContext);
+  const [file, setFile] = useState(resumeData.file);
+
+  const handleFileChange = (e) => {
+    const selected = e.target.files[0];
+    setFile(selected);
+
+    setResumeData({
+      ...resumeData,
+      file: selected,
+    });
+  };
+
+  const handleRemove = () => {
+    setFile(null);
+    setResumeData({
+      ...resumeData,
+      file: null,
+    });
+  };
 
   return (
     <div className={styles.page}>
       <div className={styles.container}>
-
-        {/* LEFT SECTION */}
+        {/* LEFT */}
         <section className={styles.left}>
           <h1>Analyze Your Resume</h1>
           <p>
@@ -21,7 +40,8 @@ const Resume = () => {
             <div className={styles.dropBox}>
               <p>
                 Drag & Drop your <b>PDF Resume</b> here
-              </p><br />
+              </p>
+              <br />
               <span>OR</span> <br />
 
               <input
@@ -29,7 +49,7 @@ const Resume = () => {
                 id="resume"
                 hidden
                 accept=".pdf,.doc,.docx"
-                onChange={(e) => setFile(e.target.files[0])}
+                onChange={handleFileChange}
               />
 
               <label htmlFor="resume" className={styles.chooseBtn}>
@@ -49,8 +69,7 @@ const Resume = () => {
                   <button
                     type="button"
                     className={styles.deleteBtn}
-                    onClick={() => setFile(null)}
-                    aria-label="Remove file"
+                    onClick={handleRemove}
                   >
                     ✕
                   </button>
@@ -68,49 +87,28 @@ const Resume = () => {
           </div>
         </section>
 
-        {/* RIGHT SECTION */}
+        {/* RIGHT */}
         <section className={styles.right}>
           <div className={styles.reportCard}>
             <h3>ATS Report Preview</h3>
 
             <div className={styles.scoreBox}>
-              <div className={styles.scoreCircle}>85</div>
+              <div className={styles.scoreCircle}>
+                {resumeData.atsScore}
+              </div>
               <span>Good Match</span>
-            </div>
-
-            <div className={styles.breakdown}>
-              <div>
-                <span>Skills</span>
-                <div className={styles.bar}><span /></div>
-              </div>
-              <div>
-                <span>Education</span>
-                <div className={styles.bar}><span /></div>
-              </div>
-              <div>
-                <span>Experience</span>
-                <div className={styles.bar}><span /></div>
-              </div>
-              <div>
-                <span>Keywords</span>
-                <div className={styles.bar}><span /></div>
-              </div>
             </div>
 
             <div className={styles.skills}>
               <h4>Skills Found</h4>
               <div className={styles.skillTags}>
-                <span>JavaScript</span>
-                <span>React</span>
-                <span>Node.js</span>
-                <span>HTML</span>
-                <span>CSS</span>
-                <span>MongoDB</span>
+                {resumeData.skills.map((s) => (
+                  <span key={s}>{s}</span>
+                ))}
               </div>
             </div>
           </div>
         </section>
-
       </div>
     </div>
   );

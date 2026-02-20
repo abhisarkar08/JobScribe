@@ -2,6 +2,7 @@ import { useLocation } from 'react-router-dom'
 import NavBar from './Components/NavBar/NavBar.jsx'
 import Mainroutes from './Routes/MainRoutes.jsx'
 import Footer from './Components/Footer/Footer.jsx'
+import PageWrapper from './Components/Loader/PageWrapper'
 import Style from './App.module.css'
 
 function App() {
@@ -11,16 +12,20 @@ function App() {
     location.pathname === '/login' ||
     location.pathname === '/register'
 
-  const showFooter = location.pathname === '/'
+  const hideFooter =
+    location.pathname === '/login' ||
+    location.pathname === '/register'
 
   return (
-    <div className={Style.app}>
-      {!hideLayout && <NavBar />}
+    <PageWrapper>
+      <div className={Style.app}>
+        {!hideLayout && <NavBar />}
 
-      <Mainroutes />
+        <Mainroutes />
 
-      {showFooter && <Footer />}
-    </div>
+        {!hideFooter && <Footer />}
+      </div>
+    </PageWrapper>
   )
 }
 

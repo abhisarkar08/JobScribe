@@ -1,17 +1,19 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState, useContext } from 'react'
 import styles from './NavBar.module.css'
-import { NavLink, useLocation } from 'react-router-dom'
+import { NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { HashLink } from 'react-router-hash-link'
 import { User, UserCog, Trash2, LogOut } from 'lucide-react'
+import { JobContext } from '../../Context/JobContext'
 
 const NavBar = () => {
+  const { appName } = useContext(JobContext)   // ✅ CONTEXT USED
+  const navig = useNavigate()
   const location = useLocation()
   const isHomePage = location.pathname === '/'
 
   const [open, setOpen] = useState(false)
   const dropdownRef = useRef(null)
 
-  // close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -29,17 +31,18 @@ const NavBar = () => {
       <div className={styles.navRight}>
         <div className={styles.Logs}>
           <div className={styles.logo}>
-            <img src="/logo.png" alt="JobScribe" />
+            <img src="/logo.png" alt={appName} />
           </div>
-          <div className={styles.name}>JobScribe</div>
+          <div className={styles.name} onClick={() => navig("/")}>
+            {appName}
+          </div>
         </div>
 
-        {/* Home page links only */}
         {isHomePage && (
           <div className={styles.rest}>
-            <HashLink smooth to="/#home">Home</HashLink>
-            <HashLink smooth to="/#features">Features</HashLink>
-            <HashLink smooth to="/#about">About</HashLink>
+            <HashLink smooth to="/#">Home</HashLink>
+            <HashLink smooth to="/#section3">About</HashLink>
+            <HashLink smooth to="/#section4">Frequently Asked Questions</HashLink>
           </div>
         )}
       </div>

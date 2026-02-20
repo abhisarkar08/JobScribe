@@ -1,15 +1,28 @@
-import React, { createContext } from "react";
+import React, { createContext, useState } from "react";
 
 export const JobContext = createContext(null);
 
-const JobContextProvider = (props) => {
+const JobContextProvider = ({ children }) => {
+  /* APP */
+  const [appName] = useState("JobScribe");
+
+  /* JD DATA (GLOBAL) */
+  const [jdData, setJdData] = useState({
+    text: "",
+    matchedSkills: [],
+    missingSkills: [],
+  });
+
   const value = {
-    appName: "JobScribe"
+    appName,
+
+    jdData,
+    setJdData,
   };
 
   return (
     <JobContext.Provider value={value}>
-      {props.children}
+      {children}
     </JobContext.Provider>
   );
 };

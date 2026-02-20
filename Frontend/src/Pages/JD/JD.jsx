@@ -1,21 +1,34 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import styles from "./JD.module.css";
+import { JobContext } from "../../Context/JobContext";
 
 const JD = () => {
+  const { setJdData } = useContext(JobContext);
+
   const [jdText, setJdText] = useState("");
-  const [matched] = useState([
+
+  const matched = [
     "JavaScript",
     "React",
     "Node.js",
     "Git",
     "HTML",
-  ]);
-  const [missing] = useState([
+  ];
+
+  const missing = [
     "Python",
     "Express",
     "AWS",
     "MongoDB",
-  ]);
+  ];
+
+  const handleMatch = () => {
+    setJdData({
+      text: jdText,
+      matchedSkills: matched,
+      missingSkills: missing,
+    });
+  };
 
   return (
     <div className={styles.page}>
@@ -48,6 +61,7 @@ const JD = () => {
             <button
               className={styles.matchBtn}
               disabled={!jdText.trim()}
+              onClick={handleMatch}
             >
               Match Skills →
             </button>
@@ -63,10 +77,7 @@ const JD = () => {
 
               <div className={styles.tags}>
                 {matched.map((skill) => (
-                  <span
-                    key={skill}
-                    className={styles.matched}
-                  >
+                  <span key={skill} className={styles.matched}>
                     ✓ {skill}
                   </span>
                 ))}
@@ -79,10 +90,7 @@ const JD = () => {
 
               <div className={styles.tags}>
                 {missing.map((skill) => (
-                  <span
-                    key={skill}
-                    className={styles.missing}
-                  >
+                  <span key={skill} className={styles.missing}>
                     ✕ {skill}
                   </span>
                 ))}
