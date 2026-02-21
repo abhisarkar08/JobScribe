@@ -1,6 +1,8 @@
+// src/Routes/MainRoutes.jsx
 import { Routes, Route, Navigate } from "react-router-dom"
 import { lazy, Suspense, useEffect, useState } from "react"
 import api from "../Api/Axioscon"
+import Skeleton from "../Components/Loader/Skeleton"
 
 /* lazy imports */
 const Home = lazy(() => import("../pages/Home/Home"))
@@ -15,7 +17,7 @@ const Improvement = lazy(() => import("../Components/Improvement/Improvement"))
 const Profile = lazy(() => import("../Pages/Profile/Profile"))
 const Err404 = lazy(() => import("../Pages/Error/Err404"))
 
-/* 🔐 Frontend-only Protected Wrapper */
+/* 🔐 Protected Route */
 const ProtectedRoute = ({ children }) => {
   const [checking, setChecking] = useState(true)
   const [allowed, setAllowed] = useState(false)
@@ -23,10 +25,9 @@ const ProtectedRoute = ({ children }) => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        // koi bhi protected API hit karo
         await api.get("/dashboard")
         setAllowed(true)
-      } catch (err) {
+      } catch {
         setAllowed(false)
       } finally {
         setChecking(false)
@@ -36,84 +37,29 @@ const ProtectedRoute = ({ children }) => {
     checkAuth()
   }, [])
 
-  if (checking) return null   // ya loader
+  if (checking) return <Skeleton />
+
   return allowed ? children : <Navigate to="/login" replace />
 }
 
 const MainRoutes = () => {
   return (
-    <Suspense fallback={null}>
+    <Suspense fallback={<Skeleton />}>
       <Routes>
-        {/* ✅ PUBLIC ROUTES */}
+        {/* PUBLIC */}
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
-        {/* 🔒 PROTECTED ROUTES */}
-        <Route
-          path="/user"
-          element={
-            <ProtectedRoute>
-              <User />
-            </ProtectedRoute>
-          }
-        />
+        {/* PROTECTED */}
+        <Route path="/user" element={<ProtectedRoute><User /></ProtectedRoute>} />
+        <Route path="/resume" element={<ProtectedRoute><Resume /></ProtectedRoute>} />
+        <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+        <Route path="/JD" element={<ProtectedRoute><JD /></ProtectedRoute>} />
+        <Route path="/JD/interview/:resumeId" element={<ProtectedRoute><Interview /></ProtectedRoute>} />
+        <Route path="/JD/improvement/:resumeId" element={<ProtectedRoute><Improvement /></ProtectedRoute>} />
+        <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
 
-        <Route
-          path="/resume"
-          element={
-            <ProtectedRoute>
-              <Resume />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/JD"
-          element={
-            <ProtectedRoute>
-              <JD />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/JD/interview/:resumeId"
-          element={
-            <ProtectedRoute>
-              <Interview />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/JD/improvement/:resumeId"
-          element={
-            <ProtectedRoute>
-              <Improvement />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/profile"
-          element={
-            <ProtectedRoute>
-              <Profile />
-            </ProtectedRoute>
-          }
-        />
-
-        {/* ❌ UNKNOWN */}
         <Route path="*" element={<Err404 />} />
       </Routes>
     </Suspense>

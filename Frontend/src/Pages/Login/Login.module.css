@@ -145,6 +145,13 @@ input {
   gap: 1rem;
 }
 
+.error {
+  font-size: 0.85rem;
+  color: #ef4444;        /* red */
+  font-weight: 500;
+  line-height: 1.2;
+}
+
 
 /* ===================== */
 /* FOOTER TEXT           */

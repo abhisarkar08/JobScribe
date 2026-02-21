@@ -9,7 +9,13 @@ createRoot(document.getElementById('root')).render(
   <JobContextProvider>
     <BrowserRouter>
       <App />
-      <ToastContainer/>    
+      <ToastContainer
+    position="top-right"
+    autoClose={2500}
+    newestOnTop
+    closeOnClick
+    pauseOnHover
+  />   
     </BrowserRouter>
   </JobContextProvider>
 )

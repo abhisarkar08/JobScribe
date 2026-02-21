@@ -1,12 +1,14 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./Dashboard.module.css";
 import {
   FileText,
   BadgeCheck,
   Target,
   Trophy,
+  Trash2,
 } from "lucide-react";
-import { Icon } from "@iconify/react";
+import api from "../../Api/Axioscon";
+import { toast } from "react-toastify";
 import {
   LineChart,
   Line,
@@ -17,41 +19,7 @@ import {
   RadialBarChart,
   RadialBar,
 } from "recharts";
-
-/* ---------------- DATA ---------------- */
-
-const trendData = [
-  { date: "Apr 1", score: 45 },
-  { date: "Apr 10", score: 55 },
-  { date: "Apr 15", score: 60 },
-  { date: "Apr 19", score: 63 },
-  { date: "Apr 21", score: 72 },
-];
-
-const weakestSkills = [
-  { name: "Docker", value: 80 },
-  { name: "AWS", value: 70 },
-  { name: "MongoDB", value: 60 },
-  { name: "TypeScript", value: 50 },
-  { name: "Redis", value: 40 },
-];
-
-const heatmapData = [
-  { skill: "Node.js", value: 78 },
-  { skill: "Express", value: 72 },
-  { skill: "MongoDB", value: 68 },
-  { skill: "Docker", value: 49 },
-  { skill: "AWS", value: 43 },
-];
-
-const resumeData = [
-  { name: "Deepak_Developer.pdf", score: 92, match: "79%" },
-  { name: "Project_Manager.pdf", score: 88, match: "82%" },
-  { name: "Sales_Resume.docx", score: 80, match: "65%" },
-  { name: "Marketing_Profile.pdf", score: 69, match: "77%" },
-];
-
-const readinessData = [{ value: 75 }];
+import { motion, AnimatePresence } from "framer-motion";
 
 /* ---------------- HELPERS ---------------- */
 
@@ -60,179 +28,295 @@ const colorByValue = (v) =>
 
 const getFileIcon = (filename) => {
   const ext = filename.split(".").pop()?.toLowerCase();
+  if (ext === "pdf") return <FileText size={26} color="#ef4444" />;
+  if (ext === "doc" || ext === "docx")
+    return <FileText size={26} color="#2563eb" />;
+  return <FileText size={26} color="#64748b" />;
+};
 
-  if (ext === "pdf") {
-    return <FileText size={26} color="#ef4444" />; // red = PDF
-  }
+/* ---------------- ANIMATIONS ---------------- */
 
-  if (ext === "doc" || ext === "docx") {
-    return <FileText size={26} color="#2563eb" />; // blue = DOCX
-  }
+const fadeUp = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0 },
+};
 
-  return <FileText size={26} color="#64748b" />; // fallback
+const stagger = {
+  hidden: {},
+  visible: {
+    transition: { staggerChildren: 0.15 },
+  },
+};
+
+const scaleFade = {
+  hidden: { opacity: 0, scale: 0.95 },
+  visible: { opacity: 1, scale: 1 },
 };
 
 /* ---------------- COMPONENT ---------------- */
 
 const Dashboard = () => {
+  const [stats, setStats] = useState({
+    totalResumes: 0,
+    avgResumeScore: 0,
+    avgMatchPercentage: 0,
+    bestMatch: 0,
+  });
+
+  const [trendData, setTrendData] = useState([]);
+  const [weakestSkills, setWeakestSkills] = useState([]);
+  const [heatmapData, setHeatmapData] = useState([]);
+  const [resumeData, setResumeData] = useState([]);
+  const [recentMatches, setRecentMatches] = useState([]);
+  const [readiness, setReadiness] = useState(0);
+
+  const [confirmDelete, setConfirmDelete] = useState({
+    show: false,
+    id: null,
+  });
+
+  /* ---------- FETCH DASHBOARD ---------- */
+  useEffect(() => {
+    const fetchDashboard = async () => {
+      try {
+        const res = await api.get("/dashboard");
+        const d = res.data;
+
+        setStats({
+          totalResumes: d.totalResumes,
+          avgResumeScore: d.avgResumeScore,
+          avgMatchPercentage: d.avgMatchPercentage,
+          bestMatch: d.bestMatch,
+        });
+
+        setTrendData(d.trend || []);
+        setWeakestSkills(d.weakestSkills || []);
+        setHeatmapData(d.skillHeatmap || []);
+        setResumeData(d.resumes || []);
+        setRecentMatches(d.recentMatches || []);
+        setReadiness(d.interviewReadiness || 0);
+      } catch {
+        toast.error("Dashboard load failed");
+      }
+    };
+
+    fetchDashboard();
+  }, []);
+
+  /* ---------- CONFIRMED DELETE ---------- */
+  const confirmDeleteResume = async () => {
+    const id = confirmDelete.id;
+    if (!id) return;
+
+    try {
+      await api.delete(`/resume/${id}`);
+
+      setResumeData((prev) => prev.filter((r) => r.id !== id));
+      setStats((prev) => ({
+        ...prev,
+        totalResumes: Math.max(0, prev.totalResumes - 1),
+      }));
+
+      toast.success("Resume deleted successfully");
+    } catch {
+      toast.error("Resume delete failed");
+    } finally {
+      setConfirmDelete({ show: false, id: null });
+    }
+  };
+
   return (
-    <div className={styles.page}>
-      {/* STATS */}
-      <section className={styles.stats}>
-        <StatCard icon={<FileText />} label="Total Resumes" value="3" />
-        <StatCard icon={<BadgeCheck />} label="Avg Resume Score" value="85%" />
-        <StatCard icon={<Target />} label="Avg Match %" value="68%" />
-        <StatCard icon={<Trophy />} label="Best Match" value="82%" />
-      </section>
+    <>
+      <div className={styles.page}>
+        {/* ================= STATS ================= */}
+        <motion.section
+          className={styles.stats}
+          variants={stagger}
+          initial="hidden"
+          animate="visible"
+        >
+          <StatCard icon={<FileText />} label="Total Resumes" value={stats.totalResumes} />
+          <StatCard icon={<BadgeCheck />} label="Avg Resume Score" value={`${stats.avgResumeScore}%`} />
+          <StatCard icon={<Target />} label="Avg Match %" value={`${stats.avgMatchPercentage}%`} />
+          <StatCard icon={<Trophy />} label="Best Match" value={`${stats.bestMatch}%`} />
+        </motion.section>
 
-      {/* GRID */}
-      <section className={styles.grid}>
-        {/* TREND */}
-        <div className={`${styles.card} ${styles.chartCard}`}>
-          <h3>Match Trend Over Time</h3>
-          <div className={styles.chart}>
-            <ResponsiveContainer>
-              <LineChart data={trendData}>
-                <XAxis dataKey="date" />
-                <YAxis domain={[0, 100]} />
-                <Tooltip />
-                <Line
-                  dataKey="score"
-                  stroke="#2563eb"
-                  strokeWidth={3}
-                  dot={{ r: 4 }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        {/* WEAKEST SKILLS */}
-        <div className={styles.card}>
-          <h3>Weakest Skills</h3>
-          {weakestSkills.map((s) => (
-            <div key={s.name} className={styles.skillRow}>
-              <span>{s.name}</span>
-              <div className={styles.bar}>
-                <span
-                  style={{
-                    width: `${s.value}%`,
-                    background: colorByValue(s.value),
-                  }}
-                />
-              </div>
+        {/* ================= GRID ================= */}
+        <motion.section
+          className={styles.grid}
+          variants={stagger}
+          initial="hidden"
+          animate="visible"
+        >
+          {/* TREND */}
+          <motion.div className={`${styles.card} ${styles.chartCard}`} variants={fadeUp} whileHover={{ y: -4 }}>
+            <h3>Match Trend Over Time</h3>
+            <div className={styles.chart}>
+              <ResponsiveContainer>
+                <LineChart data={trendData}>
+                  <XAxis dataKey="date" />
+                  <YAxis domain={[0, 100]} />
+                  <Tooltip />
+                  <Line dataKey="score" stroke="#2563eb" strokeWidth={3} />
+                </LineChart>
+              </ResponsiveContainer>
             </div>
-          ))}
-        </div>
+          </motion.div>
 
-        {/* READINESS */}
-        <div className={styles.card}>
-          <h3>Interview Readiness</h3>
-
-          <div className={styles.radialWrap}>
-            <ResponsiveContainer width="100%" height={200}>
-              <RadialBarChart
-                innerRadius="72%"
-                outerRadius="90%"
-                data={[{ value: 75 }]}
-                startAngle={180}
-                endAngle={0}
+          {/* WEAKEST SKILLS */}
+          <motion.div className={styles.card} variants={fadeUp} whileHover={{ y: -4 }}>
+            <h3>Weakest Skills</h3>
+            {weakestSkills.map((s) => (
+              <motion.div
+                key={s.name}
+                className={styles.skillRow}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
               >
-                <RadialBar
-                  dataKey="value"
-                  cornerRadius={30}
-                  fill="#22c55e"
-                />
-              </RadialBarChart>
-            </ResponsiveContainer>
-
-            <div className={styles.radialText}>
-              <b>75%</b>
-              <span>Interview Ready</span>
-            </div>
-          </div>
-
-          {/* SUPPORTING INFO */}
-          <div className={styles.readinessMeta}>
-            <div>
-              <p>Skill Coverage</p>
-              <b>78%</b>
-            </div>
-            <div>
-              <p>JD Match</p>
-              <b>72%</b>
-            </div>
-            <div>
-              <p>Consistency</p>
-              <b>80%</b>
-            </div>
-          </div>
-
-          <p className={styles.readinessHint}>
-            You're close to being interview-ready. Improve weak skills to cross 85%.
-          </p>
-        </div>
-        {/* RESUMES */}
-        <div className={styles.card}>
-          <h3>Your Resumes</h3>
-          <div className={styles.resumeGrid}>
-            {resumeData.map((r) => (
-              <div key={r.name} className={styles.resumeCard}>
-                <div className={styles.resumeIcon}>
-                  {getFileIcon(r.name)}
+                <span>{s.name}</span>
+                <div className={styles.bar}>
+                  <span style={{ width: `${s.value}%`, background: colorByValue(s.value) }} />
                 </div>
-
-                <div className={styles.resumeInfo}>
-                  <b>{r.name}</b>
-                  <p>Score: {r.score}</p>
-                  <p>Best Match: {r.match}</p>
-                </div>
-              </div>
+              </motion.div>
             ))}
-          </div>
-        </div>
+          </motion.div>
 
-        {/* HEATMAP */}
-        <div className={styles.card}>
-          <h3>Skill Heatmap</h3>
-          <div className={styles.heatmap}>
-            {heatmapData.map((h) => (
-              <div
-                key={h.skill}
-                className={styles.heatCell}
-                style={{ background: colorByValue(h.value) }}
+          {/* INTERVIEW READINESS */}
+          <motion.div className={styles.card} variants={fadeUp} whileHover={{ y: -4 }}>
+            <h3>Interview Readiness</h3>
+            <div className={styles.radialWrap}>
+              <ResponsiveContainer width="100%" height={160}>
+                <RadialBarChart
+                  innerRadius="72%"
+                  outerRadius="90%"
+                  data={[{ value: readiness }]}
+                  startAngle={180}
+                  endAngle={0}
+                >
+                  <RadialBar dataKey="value" fill={colorByValue(readiness)} />
+                </RadialBarChart>
+              </ResponsiveContainer>
+              <motion.div
+                className={styles.radialText}
+                animate={{ scale: [1, 1.05, 1] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
               >
-                <span>{h.skill}</span>
-                <b>{h.value}%</b>
-              </div>
-            ))}
-          </div>
-        </div>
+                <b>{readiness}%</b>
+                <span>Interview Ready</span>
+              </motion.div>
+            </div>
+          </motion.div>
 
-        {/* RECENT */}
-        <div className={styles.card}>
-          <h3>Recent Matches</h3>
-          <ul className={styles.matches}>
-            <li>Node.js Developer <b>79%</b></li>
-            <li>E-commerce PM <b>82%</b></li>
-            <li>Sales Executive <b>65%</b></li>
-          </ul>
-        </div>
-      </section>
-    </div>
+          {/* RESUMES */}
+          <motion.div className={styles.card} variants={fadeUp}>
+            <h3>Your Resumes</h3>
+            <div className={styles.resumeGrid}>
+              {resumeData.map((r) => (
+                <motion.div
+                  key={r.id}
+                  className={styles.resumeCard}
+                  whileHover={{ y: -6 }}
+                >
+                  <div className={styles.resumeIcon}>{getFileIcon(r.name)}</div>
+
+                  <div className={styles.resumeInfo}>
+                    <b>{r.name}</b>
+                    <p>Score: {r.score}</p>
+                    <p>Best Match: {r.match}</p>
+                  </div>
+
+                  <button
+                    className={styles.deleteBtn}
+                    onClick={() => setConfirmDelete({ show: true, id: r.id })}
+                  >
+                    <Trash2 size={18} />
+                  </button>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* HEATMAP */}
+          <motion.div className={styles.card} variants={fadeUp}>
+            <h3>Skill Heatmap</h3>
+            <div className={styles.heatmap}>
+              {heatmapData.map((h) => (
+                <motion.div
+                  key={h.skill}
+                  className={styles.heatCell}
+                  style={{ background: colorByValue(h.value) }}
+                  whileHover={{ scale: 1.05 }}
+                >
+                  <span>{h.skill}</span>
+                  <b>{h.value}%</b>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* RECENT MATCHES */}
+          <motion.div className={styles.card} variants={fadeUp}>
+            <h3>Recent Matches</h3>
+            <ul className={styles.matches}>
+              {recentMatches.map((m, i) => (
+                <motion.li
+                  key={i}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                >
+                  {m.jobTitle} <b>{m.matchScore}%</b>
+                </motion.li>
+              ))}
+            </ul>
+          </motion.div>
+        </motion.section>
+      </div>
+
+      {/* 🔔 CONFIRM DELETE POPUP */}
+      <AnimatePresence>
+        {confirmDelete.show && (
+          <motion.div
+            className={styles.overlay}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className={styles.confirmBox}
+              variants={scaleFade}
+              initial="hidden"
+              animate="visible"
+              exit="hidden"
+            >
+              <h3>Delete Resume</h3>
+              <p>Are you sure you want to delete this resume?</p>
+
+              <div className={styles.actions}>
+                <button onClick={() => setConfirmDelete({ show: false, id: null })}>
+                  Cancel
+                </button>
+                <button className={styles.dangerBtn} onClick={confirmDeleteResume}>
+                  Yes, Delete
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 };
 
-/* ---------------- SMALL COMPONENT ---------------- */
+/* ---------------- STAT CARD ---------------- */
 
 const StatCard = ({ icon, label, value }) => (
-  <div className={styles.statCard}>
+  <motion.div className={styles.statCard} variants={fadeUp} whileHover={{ y: -6 }}>
     <div className={styles.statIcon}>{icon}</div>
     <div>
       <p>{label}</p>
       <h2>{value}</h2>
     </div>
-  </div>
+  </motion.div>
 );
 
 export default Dashboard;

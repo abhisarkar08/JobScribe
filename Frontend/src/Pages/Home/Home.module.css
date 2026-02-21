@@ -319,6 +319,7 @@
   transform: translateY(-4px);
 
   margin-top: 0;
+  line-height: 1.4;
 
   transition:
     max-height 0.4s ease,

@@ -8,6 +8,7 @@ const {
   matchJDController,
   improveResumeController,
   generateInterviewController,
+  deleteResume,
 } = require("../controllers/resume.controller");
 const authMiddleware = require("../middleware/auth.middleware");
 
@@ -21,5 +22,6 @@ router.post(
   authMiddleware,
   generateInterviewController,
 );
+router.delete("/:id", authMiddleware, deleteResume);
 
 module.exports = router;

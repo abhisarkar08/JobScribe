@@ -4,10 +4,9 @@ const JobMatch = require("../models/jobMatch.model");
 
 exports.getDashboardData = async (userId) => {
   try {
-    // ✅ Convert userId string → ObjectId (VERY IMPORTANT)
     const objectUserId = new mongoose.Types.ObjectId(userId);
 
-    // -------- Overview --------
+    /* ---------- OVERVIEW ---------- */
 
     const totalResumes = await Resume.countDocuments({
       user: objectUserId,
@@ -44,18 +43,26 @@ exports.getDashboardData = async (userId) => {
     ]);
 
     const avgResumeScore = Math.round(avgResumeAgg[0]?.avg || 0);
-    const avgMatch = Math.round(avgMatchAgg[0]?.avg || 0);
+    const avgMatchPercentage = Math.round(avgMatchAgg[0]?.avg || 0);
     const bestMatch = bestMatchAgg[0]?.max || 0;
 
-    // -------- Trend --------
+    /* ---------- TREND ---------- */
 
-    const trend = await JobMatch.find({ user: objectUserId })
+    const trendRaw = await JobMatch.find({ user: objectUserId })
       .sort({ createdAt: 1 })
       .select("createdAt matchScore");
 
-    // -------- Weakest Skills --------
+    const trend = trendRaw.map((m) => ({
+      date: new Date(m.createdAt).toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      }),
+      score: m.matchScore,
+    }));
 
-    const weakestSkills = await JobMatch.aggregate([
+    /* ---------- WEAKEST SKILLS ---------- */
+
+    const weakestAgg = await JobMatch.aggregate([
       { $match: { user: objectUserId } },
       { $unwind: "$missingSkills" },
       {
@@ -68,9 +75,14 @@ exports.getDashboardData = async (userId) => {
       { $limit: 5 },
     ]);
 
-    // -------- Heatmap (Matched Skills Frequency) --------
+    const weakestSkills = weakestAgg.map((s) => ({
+      name: s._id,
+      value: Math.max(30, 100 - s.count * 10),
+    }));
 
-    const heatmap = await JobMatch.aggregate([
+    /* ---------- HEATMAP ---------- */
+
+    const heatmapAgg = await JobMatch.aggregate([
       { $match: { user: objectUserId } },
       { $unwind: "$matchedSkills" },
       {
@@ -80,31 +92,58 @@ exports.getDashboardData = async (userId) => {
         },
       },
       { $sort: { count: -1 } },
+      { $limit: 6 },
     ]);
 
-    // -------- Recent Matches --------
+    const skillHeatmap = heatmapAgg.map((h) => ({
+      skill: h._id,
+      value: Math.min(100, 40 + h.count * 10),
+    }));
 
-    const recentMatches = await JobMatch.find({
-      user: objectUserId,
-    })
-      .sort({ createdAt: -1 })
-      .limit(5)
-      .select("jobTitle matchScore createdAt");
+    /* ---------- RESUMES ---------- */
 
-    // -------- Interview Readiness --------
+    const resumes = await Resume.find({ user: objectUserId });
 
-    const interviewReadiness = Math.round((avgResumeScore + avgMatch) / 2);
+    const matches = await JobMatch.find({ user: objectUserId });
+
+    const resumeCards = resumes.map((r) => {
+  const match = matches.find(
+    (m) => m.resume.toString() === r._id.toString()
+  );
+
+  return {
+    id: r._id, // 🔥 REQUIRED
+    name: r.originalFileName,
+    score: r.analysis?.score || 0,
+    match: match ? `${match.matchScore}%` : "—",
+  };
+});
+
+    /* ---------- RECENT MATCHES ---------- */
+
+    const recentMatches = matches
+      .sort((a, b) => b.createdAt - a.createdAt)
+      .slice(0, 3)
+      .map((m) => ({
+        jobTitle: m.jobTitle,
+        matchScore: m.matchScore,
+      }));
+
+    /* ---------- READINESS ---------- */
+
+    const interviewReadiness = Math.round(
+      (avgResumeScore + avgMatchPercentage) / 2
+    );
 
     return {
-      overview: {
-        totalResumes,
-        avgResumeScore,
-        avgMatch,
-        bestMatch,
-      },
+      totalResumes,
+      avgResumeScore,
+      avgMatchPercentage,
+      bestMatch,
       trend,
       weakestSkills,
-      heatmap,
+      skillHeatmap,
+      resumes: resumeCards,
       recentMatches,
       interviewReadiness,
     };

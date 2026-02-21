@@ -161,6 +161,12 @@ input {
   cursor: pointer;
 }
 
+.error {
+  font-size: 0.85rem;
+  color: #ef4444;        /* red */
+  font-weight: 500;
+  line-height: 1.2;
+}
 /* ===================== */
 /* DESKTOP ENHANCEMENT   */
 /* ===================== */

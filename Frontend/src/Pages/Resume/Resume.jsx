@@ -2,6 +2,22 @@ import React, { useState, useContext } from "react";
 import styles from "./Resume.module.css";
 import { JobContext } from "../../Context/JobContext";
 import api from "../../Api/Axioscon";
+import { toast } from "react-toastify";
+import { motion } from "framer-motion";
+
+/* ---------------- Animations ---------------- */
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0 }
+};
+
+const stagger = {
+  hidden: {},
+  visible: {
+    transition: { staggerChildren: 0.15 }
+  }
+};
 
 const Resume = () => {
   const { resumeData, setResumeData } = useContext(JobContext);
@@ -14,10 +30,10 @@ const Resume = () => {
   const score = resumeData?.atsScore ?? 0;
   const safeScore = Math.max(0, Math.min(score, 100));
 
-  let progressColor = "#e5e7eb"; // grey (default)
-  if (safeScore >= 70) progressColor = "#22c55e"; // green
-  else if (safeScore >= 40) progressColor = "#facc15"; // yellow
-  else if (safeScore > 0) progressColor = "#ef4444"; // red
+  let progressColor = "#e5e7eb";
+  if (safeScore >= 70) progressColor = "#22c55e";
+  else if (safeScore >= 40) progressColor = "#facc15";
+  else if (safeScore > 0) progressColor = "#ef4444";
 
   const progressDeg = `${safeScore * 3.6}deg`;
 
@@ -41,7 +57,9 @@ const Resume = () => {
 
   const handleGenerate = async () => {
     if (!file) {
-      setError("Please upload a resume first");
+      const msg = "Please upload a resume first";
+      setError(msg);
+      toast.warning(msg);
       return;
     }
 
@@ -50,7 +68,7 @@ const Resume = () => {
 
     try {
       const formData = new FormData();
-      formData.append("resume", file); // backend expects "resume"
+      formData.append("resume", file);
 
       const res = await api.post("/resume/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" },
@@ -64,8 +82,13 @@ const Resume = () => {
         atsScore: analysis.score,
         skills: analysis.skills || [],
       });
+
+      toast.success("ATS report generated successfully 🚀");
     } catch (err) {
-      setError(err?.response?.data?.message || "Resume upload failed");
+      const msg =
+        err?.response?.data?.message || "Resume upload failed";
+      setError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -73,18 +96,36 @@ const Resume = () => {
 
   return (
     <div className={styles.page}>
-      <div className={styles.container}>
+      <motion.div
+        className={styles.container}
+        variants={stagger}
+        initial="hidden"
+        animate="visible"
+      >
         {/* ---------- LEFT ---------- */}
-        <section className={styles.left}>
-          <h1>Analyze Your Resume</h1>
-          <p>
-            Get Instant <span>ATS Score</span> & Detailed Feedback
-          </p>
+        <motion.section
+          className={styles.left}
+          variants={fadeUp}
+        >
+          <motion.h1 variants={fadeUp}>
+            Analyze Your Resume
+          </motion.h1>
 
-          <div className={styles.uploadCard}>
+          <motion.p variants={fadeUp}>
+            Get Instant <span>ATS Score</span> & Detailed Feedback
+          </motion.p>
+
+          <motion.div
+            className={styles.uploadCard}
+            variants={fadeUp}
+            whileHover={{ y: -4 }}
+          >
             <h3>Upload Your Resume</h3>
 
-            <div className={styles.dropBox}>
+            <motion.div
+              className={styles.dropBox}
+              whileHover={{ scale: 1.02 }}
+            >
               <p>
                 Drag & Drop your <b>PDF Resume</b> here
               </p>
@@ -105,10 +146,14 @@ const Resume = () => {
               </label>
 
               <small>Accepted Formats: PDF, DOCX</small>
-            </div>
+            </motion.div>
 
             {file && (
-              <div className={styles.fileRow}>
+              <motion.div
+                className={styles.fileRow}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+              >
                 <span className={styles.fileName}>{file.name}</span>
                 <div className={styles.fileActions}>
                   <span className={styles.success}>Ready</span>
@@ -120,32 +165,53 @@ const Resume = () => {
                     ✕
                   </button>
                 </div>
-              </div>
+              </motion.div>
             )}
 
-            {error && <p className={styles.error}>{error}</p>}
+            {error && (
+              <motion.p
+                className={styles.error}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+              >
+                {error}
+              </motion.p>
+            )}
 
-            <button
+            <motion.button
               className={styles.generateBtn}
               onClick={handleGenerate}
               disabled={loading}
+              whileHover={{ scale: loading ? 1 : 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
               {loading ? "Analyzing..." : "Generate ATS Report →"}
-            </button>
+            </motion.button>
 
             <p className={styles.tip}>
               💡 Add proper headings, skills & keywords for better results.
             </p>
-          </div>
-        </section>
+          </motion.div>
+        </motion.section>
 
         {/* ---------- RIGHT ---------- */}
-        <section className={styles.right}>
-          <div className={styles.reportCard}>
+        <motion.section
+          className={styles.right}
+          variants={fadeUp}
+        >
+          <motion.div
+            className={styles.reportCard}
+            whileHover={{ y: -4 }}
+          >
             <h3>ATS Report Preview</h3>
 
-            <div className={styles.scoreBox}>
-              <div
+            <motion.div
+              className={styles.scoreBox}
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.4 }}
+            >
+              <motion.div
                 className={styles.scoreCircle}
                 style={{
                   background: `conic-gradient(
@@ -153,27 +219,47 @@ const Resume = () => {
                     #e5e7eb 0deg
                   )`,
                 }}
+                animate={{ scale: [1, 1.05, 1] }}
+                transition={{
+                  duration: 1.5,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
               >
                 {safeScore}
-              </div>
+              </motion.div>
               <span>ATS Score</span>
-            </div>
+            </motion.div>
 
             <div className={styles.skills}>
               <h4>Skills Found</h4>
-              <div className={styles.skillTags}>
+
+              <motion.div
+                className={styles.skillTags}
+                variants={stagger}
+                initial="hidden"
+                animate="visible"
+              >
                 {resumeData?.skills?.length > 0 ? (
-                  resumeData.skills.map((s) => <span key={s}>{s}</span>)
+                  resumeData.skills.map((s) => (
+                    <motion.span
+                      key={s}
+                      variants={fadeUp}
+                      whileHover={{ scale: 1.1 }}
+                    >
+                      {s}
+                    </motion.span>
+                  ))
                 ) : (
                   <span className={styles.muted}>
                     No skills extracted yet
                   </span>
                 )}
-              </div>
+              </motion.div>
             </div>
-          </div>
-        </section>
-      </div>
+          </motion.div>
+        </motion.section>
+      </motion.div>
     </div>
   );
 };

@@ -26,24 +26,17 @@ export default function Improvement() {
           jdText,
         });
 
-        const raw =
-          res.data.suggestions?.content ||
-          res.data.suggestions?.text ||
-          res.data.suggestions;
-        let parsed = [];
-
-        if (Array.isArray(raw)) {
-          parsed = raw;
-        } else if (typeof raw === "string") {
-          parsed = raw
-            .split("\n")
-            .map(s => s.replace(/^[-•\d.]+\s*/, "").trim())
-            .filter(Boolean);
-        }
-
-        setSuggestions(parsed);
+        setSuggestions(
+          Array.isArray(res.data.suggestions)
+            ? res.data.suggestions
+            : []
+        );
       } catch (err) {
-        setError("Failed to generate improvements");
+        if (err.response?.status === 429) {
+          setError("AI limit reached. Try again later.");
+        } else {
+          setError("Failed to generate improvements");
+        }
       } finally {
         setLoading(false);
       }
@@ -55,7 +48,10 @@ export default function Improvement() {
   return (
     <div className={styles.page}>
       <header className={styles.header}>
-        <button className={styles.backButton} onClick={() => navigate(-1)}>
+        <button
+          className={styles.backButton}
+          onClick={() => navigate(-1)}
+        >
           ← Back
         </button>
         <h1 className={styles.title}>Resume Improvement</h1>
@@ -66,18 +62,13 @@ export default function Improvement() {
         {error && <p className={styles.error}>{error}</p>}
 
         {!loading && !error && (
-          <section className={styles.columns}>
-            <div className={styles.panel}>
-              <h2 className={styles.panelTitle}>Suggestions</h2>
-              <div className={styles.list}>
-                {suggestions.map((item, i) => (
-                  <div key={i} className={styles.card}>
-                    <div className={styles.step}>S{i + 1}</div>
-                    <p className={styles.cardText}>{item}</p>
-                  </div>
-                ))}
+          <section className={styles.list}>
+            {suggestions.map((item, i) => (
+              <div key={i} className={styles.card}>
+                <span className={styles.step}>S{i + 1}</span>
+                <p className={styles.cardText}>{item}</p>
               </div>
-            </div>
+            ))}
           </section>
         )}
       </main>

@@ -111,7 +111,7 @@ exports.matchJDController = async (req, res) => {
       });
     }
 
-    const jdAnalysis = await analyzeJD(jdText);
+    const jdAnalysis = await analyzeJD(jdText); // 🔥 AI CALL
 
     const resumeSkills = resume.analysis?.skills || [];
     const jdSkills = [
@@ -144,7 +144,6 @@ exports.matchJDController = async (req, res) => {
             (matchedSkills.length / jdSkills.length) * 100
           );
 
-    // ✅ SAVE MATCH RESULT
     await JobMatch.create({
       user: req.user.id,
       resume: resume._id,
@@ -164,7 +163,15 @@ exports.matchJDController = async (req, res) => {
       totalRequiredSkills: jdSkills.length,
     });
   } catch (error) {
-    console.error("MATCH ERROR:", error);
+    console.error("MATCH ERROR:", error.message);
+
+    // 🔥 IMPORTANT: preserve 429
+    if (error.status === 429) {
+      return res.status(429).json({
+        message: "AI limit reached. Please try again later.",
+      });
+    }
+
     return res.status(500).json({
       message: "Matching failed",
     });
@@ -195,21 +202,32 @@ exports.improveResumeController = async (req, res) => {
 
     const missingSkills = jdSkills.filter(
       (skill) =>
-        !resumeSkills.map((s) => s.toLowerCase()).includes(skill.toLowerCase()),
+        !resumeSkills
+          .map((s) => s.toLowerCase())
+          .includes(skill.toLowerCase())
     );
 
     const suggestions = await generateImprovementSuggestions(
       resume.extractedText,
       jdText,
-      missingSkills,
+      missingSkills
     );
 
     res.json({
       success: true,
-      suggestions,
+      suggestions: Array.isArray(suggestions)
+        ? suggestions
+        : Object.values(suggestions).flat(),
     });
   } catch (error) {
-    console.error(error);
+    console.error("IMPROVE ERROR:", error.message);
+
+    if (error.status === 429) {
+      return res.status(429).json({
+        message: "AI limit reached. Please try again later.",
+      });
+    }
+
     res.status(500).json({ message: "Improvement failed" });
   }
 };
@@ -237,17 +255,39 @@ exports.generateInterviewController = async (req, res) => {
 
     const questions = await generateInterviewQuestions(
       resume.extractedText,
-      jdText,
+      jdText
     );
 
     res.json({
       success: true,
-      questions,
+      questions: Object.values(questions).flat(),
     });
   } catch (error) {
-    console.error("INTERVIEW GEN ERROR:", error);
+    console.error("INTERVIEW ERROR:", error.message);
+
+    if (error.status === 429) {
+      return res.status(429).json({
+        message: "AI limit reached. Please try again later.",
+      });
+    }
+
     res.status(500).json({
       message: "Interview question generation failed",
     });
   }
+};
+
+exports.deleteResume = async (req, res) => {
+  const resume = await Resume.findOneAndDelete({
+    _id: req.params.id,
+    user: req.user.id,
+  });
+
+  if (!resume) {
+    return res.status(404).json({ message: "Resume not found" });
+  }
+
+  await JobMatch.deleteMany({ resume: resume._id });
+
+  res.json({ success: true });
 };

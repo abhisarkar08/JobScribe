@@ -5,10 +5,9 @@ import api from "../../Api/Axioscon";
 
 export default function Interview() {
   const navigate = useNavigate();
-
-  const { resumeId } = useParams();      // ✅ URL se
+  const { resumeId } = useParams();
   const location = useLocation();
-  const { jdText } = location.state || {}; // ✅ state se
+  const { jdText } = location.state || {};
 
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -27,24 +26,17 @@ export default function Interview() {
           jdText,
         });
 
-        const raw =
-          res.data.questions?.content ||
-          res.data.questions?.text ||
-          res.data.questions;
-        let parsed = [];
-
-        if (Array.isArray(raw)) {
-          parsed = raw;
-        } else if (typeof raw === "string") {
-          parsed = raw
-            .split("\n")
-            .map(q => q.replace(/^\d+[\).\s]*/, "").trim())
-            .filter(Boolean);
-        }
-
-        setQuestions(parsed);
+        setQuestions(
+          Array.isArray(res.data.questions)
+            ? res.data.questions
+            : []
+        );
       } catch (err) {
-        setError("Failed to generate interview questions");
+        if (err.response?.status === 429) {
+          setError("AI limit reached. Try again later.");
+        } else {
+          setError("Failed to generate interview questions");
+        }
       } finally {
         setLoading(false);
       }
@@ -56,7 +48,10 @@ export default function Interview() {
   return (
     <div className={styles.page}>
       <header className={styles.header}>
-        <button className={styles.backButton} onClick={() => navigate(-1)}>
+        <button
+          className={styles.backButton}
+          onClick={() => navigate(-1)}
+        >
           ← Back
         </button>
         <h1 className={styles.title}>Interview Questions</h1>
@@ -70,9 +65,7 @@ export default function Interview() {
           <section className={styles.list}>
             {questions.map((q, idx) => (
               <article key={idx} className={styles.card}>
-                <div className={styles.meta}>
-                  <span className={styles.qNumber}>Q{idx + 1}</span>
-                </div>
+                <span className={styles.qNumber}>Q{idx + 1}</span>
                 <p className={styles.questionText}>{q}</p>
               </article>
             ))}

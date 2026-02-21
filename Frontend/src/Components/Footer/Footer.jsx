@@ -1,7 +1,10 @@
 import React from 'react'
 import styles from './Footer.module.css'
+import { JobContext } from "../../Context/JobContext"
+import { useContext } from "react"
 
 const Footer = () => {
+  const { appName } = useContext(JobContext)
   return (
     <footer className={styles.footer}>
       <div className={styles.top}>
@@ -9,7 +12,9 @@ const Footer = () => {
         {/* LEFT */}
         <div className={styles.brand}>
           <div className={styles.logoRow}>
-            <div className={styles.logo}></div>
+            <div className={styles.logo}>
+              <img src="/logoo.png" alt={appName} />
+            </div>
             <span className={styles.name}>JobScribe</span>
           </div>
 

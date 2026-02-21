@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import api from "../../Api/Axioscon";
 import styles from "./Login.module.css";
+import { toast } from "react-toastify";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -12,7 +13,9 @@ const Login = () => {
   });
 
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+
+  /* 👇 form specific error (inputs ke niche) */
+  const [formError, setFormError] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -20,23 +23,39 @@ const Login = () => {
       ...prev,
       [name]: value,
     }));
+    setFormError(""); // typing start → error clear
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
+    setFormError("");
 
+    /* 🔹 CLIENT SIDE VALIDATION */
     if (!formData.email || !formData.password) {
-      setError("Please enter email and password");
+      const msg = "Please enter email and password";
+      setFormError(msg);
+      toast.warning(msg);
       return;
     }
 
     setLoading(true);
+
     try {
       await api.post("/auth/login", formData);
-      navigate("/user");
+
+      toast.success("Login successful 🎉");
+
+      setTimeout(() => {
+        navigate("/user");
+      }, 700);
     } catch (err) {
-      setError(err?.response?.data?.message || "Login failed");
+      const msg =
+        err?.response?.data?.message ||
+        "Invalid email or password";
+
+      /* 👇 form error + toast both */
+      setFormError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -89,16 +108,25 @@ const Login = () => {
               onChange={handleChange}
             />
 
-            {error && <p className={styles.error}>{error}</p>}
+            {/* 🔴 FORM ERROR (below inputs) */}
+            {formError && (
+              <p className={styles.error}>{formError}</p>
+            )}
 
-            <button type="submit" className={styles.createBtn} disabled={loading}>
+            <button
+              type="submit"
+              className={styles.createBtn}
+              disabled={loading}
+            >
               {loading ? "Logging in..." : "Login"}
             </button>
           </form>
 
           <p className={styles.loginText}>
             Don't have an account?{" "}
-            <span onClick={() => navigate("/register")}>Sign up</span>
+            <span onClick={() => navigate("/register")}>
+              Sign up
+            </span>
           </p>
         </div>
       </div>

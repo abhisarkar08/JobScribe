@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../Api/Axioscon";
 import styles from "./Register.module.css";
+import { toast } from "react-toastify";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -14,7 +15,9 @@ const Register = () => {
   });
 
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+
+  /* 👇 form specific error (inputs ke niche) */
+  const [formError, setFormError] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -22,14 +25,18 @@ const Register = () => {
       ...prev,
       [name]: value,
     }));
+    setFormError(""); // typing start → error clear
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
+    setFormError("");
 
+    /* 🔹 CLIENT SIDE VALIDATION */
     if (!formData.firstName || !formData.email || !formData.password) {
-      setError("Please fill all required fields");
+      const msg = "Please fill all required fields";
+      setFormError(msg);
+      toast.warning(msg);
       return;
     }
 
@@ -44,9 +51,18 @@ const Register = () => {
         password: formData.password,
       });
 
-      navigate("/user"); // or /login
+      toast.success("Account created successfully 🎉");
+
+      setTimeout(() => {
+        navigate("/user"); // ya /login
+      }, 800);
     } catch (err) {
-      setError(err?.response?.data?.message || "Registration failed");
+      const msg =
+        err?.response?.data?.message || "Registration failed";
+
+      /* 👇 form error + toast both */
+      setFormError(msg);
+      toast.error(msg);
     } finally {
       setLoading(false);
     }
@@ -70,6 +86,7 @@ const Register = () => {
           <h2>Create Account</h2>
 
           <form onSubmit={handleSubmit}>
+            {/* GOOGLE SIGNUP (NO TOAST HERE) */}
             <button
               type="button"
               className={styles.googleBtn}
@@ -117,16 +134,25 @@ const Register = () => {
               onChange={handleChange}
             />
 
-            {error && <p className={styles.error}>{error}</p>}
+            {/* 🔴 FORM ERROR */}
+            {formError && (
+              <p className={styles.error}>{formError}</p>
+            )}
 
-            <button type="submit" className={styles.createBtn} disabled={loading}>
+            <button
+              type="submit"
+              className={styles.createBtn}
+              disabled={loading}
+            >
               {loading ? "Creating..." : "Create Account"}
             </button>
           </form>
 
           <p className={styles.loginText}>
             Already have an account?{" "}
-            <span onClick={() => navigate("/login")}>Log in</span>
+            <span onClick={() => navigate("/login")}>
+              Log in
+            </span>
           </p>
         </div>
       </div>
