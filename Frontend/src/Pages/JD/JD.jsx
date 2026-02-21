@@ -1,33 +1,75 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import styles from "./JD.module.css";
 import { JobContext } from "../../Context/JobContext";
+import api from "../../Api/Axioscon";
+import { useNavigate } from "react-router-dom";
 
 const JD = () => {
-  const { setJdData } = useContext(JobContext);
+  const navigate = useNavigate();
+  const { jdData, setJdData } = useContext(JobContext);
 
-  const [jdText, setJdText] = useState("");
+  const [jdText, setJdText] = useState(jdData.text || "");
+  const [resumes, setResumes] = useState([]);
+  const [selectedResume, setSelectedResume] = useState(null);
 
-  const matched = [
-    "JavaScript",
-    "React",
-    "Node.js",
-    "Git",
-    "HTML",
-  ];
+  const [matched, setMatched] = useState(jdData.matchedSkills || []);
+  const [missing, setMissing] = useState(jdData.missingSkills || []);
 
-  const missing = [
-    "Python",
-    "Express",
-    "AWS",
-    "MongoDB",
-  ];
+  const [showModal, setShowModal] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleMatch = () => {
-    setJdData({
-      text: jdText,
-      matchedSkills: matched,
-      missingSkills: missing,
-    });
+
+  useEffect(() => {
+    if (jdData.resumeId && resumes.length) {
+      const found = resumes.find(r => r._id === jdData.resumeId);
+      if (found) setSelectedResume(found);
+    }
+  }, [jdData.resumeId, resumes]);
+  /* 🔹 FETCH USER RESUMES */
+  useEffect(() => {
+    const fetchResumes = async () => {
+      try {
+        const res = await api.get("/resume/my-resumes");
+        setResumes(res.data.resumes || []);
+      } catch (err) {
+        setError("Failed to fetch resumes");
+      }
+    };
+
+    fetchResumes();
+  }, []);
+
+  /* 🔹 MATCH JD WITH SELECTED RESUME */
+  const handleMatch = async () => {
+    if (!jdText.trim() || !selectedResume) return;
+
+    setLoading(true);
+    setError("");
+
+    try {
+      const res = await api.post("/resume/match-jd", {
+        resumeId: selectedResume._id,
+        jdText,
+      });
+
+      setMatched(res.data.matchedSkills || []);
+      setMissing(res.data.missingSkills || []);
+
+      /* 🔥 store in context */
+      setJdData({
+        text: jdText,
+        matchedSkills: res.data.matchedSkills || [],
+        missingSkills: res.data.missingSkills || [],
+        resumeId: selectedResume._id,
+      });
+
+      setShowModal(false);
+    } catch (err) {
+      setError("JD matching failed");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -37,8 +79,7 @@ const JD = () => {
         <header className={styles.header}>
           <h1>Analyze Job Description</h1>
           <p>
-            Paste job description below & discover matched and
-            missing skills.
+            Paste job description below & discover matched and missing skills.
           </p>
         </header>
 
@@ -51,7 +92,13 @@ const JD = () => {
             <textarea
               placeholder="Paste job description here..."
               value={jdText}
-              onChange={(e) => setJdText(e.target.value)}
+              onChange={(e) => {
+                setJdText(e.target.value);
+                setJdData(prev => ({
+                  ...prev,
+                  text: e.target.value,
+                }));
+              }}
             />
 
             <p className={styles.tip}>
@@ -61,10 +108,12 @@ const JD = () => {
             <button
               className={styles.matchBtn}
               disabled={!jdText.trim()}
-              onClick={handleMatch}
+              onClick={() => setShowModal(true)}
             >
               Match Skills →
             </button>
+
+            {error && <p className={styles.error}>{error}</p>}
           </section>
 
           {/* RIGHT */}
@@ -72,15 +121,22 @@ const JD = () => {
             {/* MATCHED */}
             <div className={styles.card}>
               <h4>
-                Skills Found <span>{matched.length}/8 Matched</span>
+                Skills Found{" "}
+                <span>{matched.length} Matched</span>
               </h4>
 
               <div className={styles.tags}>
-                {matched.map((skill) => (
-                  <span key={skill} className={styles.matched}>
-                    ✓ {skill}
+                {matched.length ? (
+                  matched.map((skill) => (
+                    <span key={skill} className={styles.matched}>
+                      ✓ {skill}
+                    </span>
+                  ))
+                ) : (
+                  <span className={styles.muted}>
+                    No matched skills yet
                   </span>
-                ))}
+                )}
               </div>
             </div>
 
@@ -89,27 +145,92 @@ const JD = () => {
               <h4>Skills Missing</h4>
 
               <div className={styles.tags}>
-                {missing.map((skill) => (
-                  <span key={skill} className={styles.missing}>
-                    ✕ {skill}
+                {missing.length ? (
+                  missing.map((skill) => (
+                    <span key={skill} className={styles.missing}>
+                      ✕ {skill}
+                    </span>
+                  ))
+                ) : (
+                  <span className={styles.muted}>
+                    No missing skills
                   </span>
-                ))}
+                )}
               </div>
             </div>
 
             {/* ACTIONS */}
             <div className={styles.actions}>
-              <button className={styles.interviewBtn}>
+              <button
+                className={styles.interviewBtn}
+                disabled={!selectedResume || !jdText}
+                onClick={() =>
+                  navigate(`/JD/interview/${selectedResume._id}`, {
+                    state: { jdText },
+                  })
+                }
+              >
                 Generate Interview Questions →
               </button>
 
-              <button className={styles.improveBtn}>
+              <button
+                className={styles.improveBtn}
+                disabled={!selectedResume || !jdText}
+                onClick={() =>
+                  navigate(`/JD/improvement/${selectedResume._id}`, {
+                    state: { jdText },
+                  })
+                }
+              >
                 Improve Resume →
               </button>
             </div>
           </section>
         </div>
       </div>
+
+      {/* 🔥 RESUME SELECT MODAL */}
+      {showModal && (
+        <div className={styles.modalBackdrop}>
+          <div className={styles.modal}>
+            <h3>Select Resume</h3>
+
+            {resumes.length === 0 && (
+              <p>No resumes uploaded yet</p>
+            )}
+
+            <ul className={styles.resumeList}>
+              {resumes.map((r) => (
+                <li
+                  key={r._id}
+                  className={
+                    selectedResume?._id === r._id
+                      ? styles.active
+                      : ""
+                  }
+                  onClick={() => setSelectedResume(r)}
+                >
+                  {r.originalFileName}
+                  <span>{r.analysis?.score || 0} ATS</span>
+                </li>
+              ))}
+            </ul>
+
+            <div className={styles.modalActions}>
+              <button onClick={() => setShowModal(false)}>
+                Cancel
+              </button>
+
+              <button
+                onClick={handleMatch}
+                disabled={!selectedResume || loading}
+              >
+                {loading ? "Matching..." : "Continue"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

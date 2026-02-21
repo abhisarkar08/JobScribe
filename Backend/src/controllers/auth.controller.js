@@ -26,8 +26,12 @@ async function register(req, res) {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: false, // Set to true in production
+      secure: false,
       sameSite: "lax",
+    });
+
+    return res.status(201).json({
+      message: "User registered successfully",
     });
   } catch (error) {
     console.error(error);
@@ -79,9 +83,50 @@ function deletea(req, res) {
     });
 }
 
+/* 🔹 GET LOGGED-IN USER */
+async function me(req, res) {
+  try {
+    const currentUser = await user
+      .findById(req.user._id)
+      .select("-password");
+
+    res.json(currentUser);
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch user" });
+  }
+}
+
+/* 🔹 UPDATE PROFILE */
+async function updateProfile(req, res) {
+  try {
+    const { fullName, email, password } = req.body;
+
+    const updateData = {};
+
+    if (fullName) updateData.fullName = fullName;
+    if (email) updateData.email = email;
+
+    if (password && password.trim().length >= 6) {
+      const bcrypt = require("bcrypt");
+      updateData.password = await bcrypt.hash(password, 10);
+
+      // 🔥 IMPORTANT: convert google user to local login
+      updateData.provider = "local";
+    }
+
+    await user.findByIdAndUpdate(req.user._id, updateData);
+
+    res.json({ message: "Profile updated successfully" });
+  } catch (err) {
+    res.status(500).json({ message: "Profile update failed" });
+  }
+}
+
 module.exports = {
   register,
   login,
   logout,
   deletea,
+  me,
+  updateProfile,
 };

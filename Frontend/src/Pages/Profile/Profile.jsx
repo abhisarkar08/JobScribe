@@ -1,31 +1,75 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./Profile.module.css";
+import api from "../../Api/Axioscon";
 
 const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   const [formData, setFormData] = useState({
-    firstName: "Thomas",
-    lastName: "Hardison",
-    email: "thomashardison@dayrep.com",
-    password: ""
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
   });
+
+  /* 🔹 LOAD USER DATA */
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const res = await api.get("/auth/me");
+
+        setFormData({
+          firstName: res.data.fullName.firstName,
+          lastName: res.data.fullName.lastName,
+          email: res.data.email,
+          password: "",
+        });
+      } catch (err) {
+        setError("Failed to load profile");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSave = () => {
-    setIsEditing(false);
-    console.log("Saved Data:", formData);
-    // 👉 API call later
+  /* 🔹 SAVE PROFILE */
+  const handleSave = async () => {
+    setError("");
+
+    try {
+      await api.put("/auth/update", {
+        fullName: {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+        },
+        email: formData.email,
+        password: formData.password || undefined,
+      });
+
+      setIsEditing(false);
+      setFormData((prev) => ({ ...prev, password: "" }));
+    } catch (err) {
+      setError("Failed to update profile");
+    }
   };
+
+  if (loading) return null;
 
   return (
     <div className={styles.profilePage}>
       <div className={styles.profileCard}>
         <h2 className={styles.title}>Profile Details</h2>
+
+        {error && <p className={styles.error}>{error}</p>}
 
         <div className={styles.formGrid}>
           <div className={styles.field}>
@@ -35,7 +79,6 @@ const Profile = () => {
               value={formData.firstName}
               onChange={handleChange}
               disabled={!isEditing}
-              placeholder="Enter first name"
             />
           </div>
 
@@ -46,7 +89,6 @@ const Profile = () => {
               value={formData.lastName}
               onChange={handleChange}
               disabled={!isEditing}
-              placeholder="Enter last name"
             />
           </div>
 
@@ -57,19 +99,18 @@ const Profile = () => {
               value={formData.email}
               onChange={handleChange}
               disabled={!isEditing}
-              placeholder="Enter email"
             />
           </div>
 
           <div className={`${styles.field} ${styles.full}`}>
-            <label>Password</label>
+            <label>New Password</label>
             <input
               type="password"
               name="password"
-              value={formData.password}
+              value={isEditing ? formData.password : ""}
               onChange={handleChange}
               disabled={!isEditing}
-              placeholder="••••••••"
+              placeholder="*****"
             />
           </div>
         </div>

@@ -1,59 +1,85 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import styles from './Improvement.module.css';
+import React, { useEffect, useState } from "react";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
+import styles from "./Improvement.module.css";
+import api from "../../Api/Axioscon";
 
 export default function Improvement() {
   const navigate = useNavigate();
+  const { resumeId } = useParams();
+  const location = useLocation();
+  const { jdText } = location.state || {};
 
-  const areasToImprove = [
-    'Add quantified achievements (metrics, % improvement, revenue impact).',
-    'Remove generic phrases; use impact-oriented verbs.',
-    'Prioritize most relevant projects and shorten older roles.',
-    'List technical stack per project in a concise format.'
-  ];
+  const [suggestions, setSuggestions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  const recommendations = [
-    'Start bullets with action verbs and include one measurable outcome.',
-    'Use consistent date and heading formats for readability.',
-    'Condense similar bullets and group related technologies.',
-    'Add a 2–3 line summary highlighting target role & strengths.'
-  ];
+  useEffect(() => {
+    if (!jdText) {
+      navigate("/JD", { replace: true });
+      return;
+    }
+
+    const fetchImprovements = async () => {
+      try {
+        const res = await api.post("/resume/improve-resume", {
+          resumeId,
+          jdText,
+        });
+
+        const raw =
+          res.data.suggestions?.content ||
+          res.data.suggestions?.text ||
+          res.data.suggestions;
+        let parsed = [];
+
+        if (Array.isArray(raw)) {
+          parsed = raw;
+        } else if (typeof raw === "string") {
+          parsed = raw
+            .split("\n")
+            .map(s => s.replace(/^[-•\d.]+\s*/, "").trim())
+            .filter(Boolean);
+        }
+
+        setSuggestions(parsed);
+      } catch (err) {
+        setError("Failed to generate improvements");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchImprovements();
+  }, [resumeId, jdText, navigate]);
 
   return (
     <div className={styles.page}>
       <header className={styles.header}>
-        <button className={styles.backButton} onClick={() => navigate(-1)} aria-label="Back">
+        <button className={styles.backButton} onClick={() => navigate(-1)}>
           ← Back
         </button>
         <h1 className={styles.title}>Resume Improvement</h1>
       </header>
 
       <main className={styles.container}>
-        <section className={styles.columns}>
-          <div className={styles.panel}>
-            <h2 className={styles.panelTitle}>Areas to Improve</h2>
-            <div className={styles.list}>
-              {areasToImprove.map((item, i) => (
-                <div key={i} className={styles.card}>
-                  <div className={styles.dot} aria-hidden>•</div>
-                  <p className={styles.cardText}>{item}</p>
-                </div>
-              ))}
-            </div>
-          </div>
+        {loading && <p>Analyzing resume...</p>}
+        {error && <p className={styles.error}>{error}</p>}
 
-          <div className={styles.panel}>
-            <h2 className={styles.panelTitle}>Recommendations</h2>
-            <div className={styles.list}>
-              {recommendations.map((item, i) => (
-                <div key={i} className={styles.card}>
-                  <div className={styles.step}>R{i + 1}</div>
-                  <p className={styles.cardText}>{item}</p>
-                </div>
-              ))}
+        {!loading && !error && (
+          <section className={styles.columns}>
+            <div className={styles.panel}>
+              <h2 className={styles.panelTitle}>Suggestions</h2>
+              <div className={styles.list}>
+                {suggestions.map((item, i) => (
+                  <div key={i} className={styles.card}>
+                    <div className={styles.step}>S{i + 1}</div>
+                    <p className={styles.cardText}>{item}</p>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
       </main>
     </div>
   );

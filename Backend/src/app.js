@@ -2,15 +2,25 @@ const express = require("express");
 const cookieParser = require("cookie-parser");
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
+const cors = require("cors");
 const { Strategy: GoogleStrategy } = require("passport-google-oauth20");
 const user = require("./models/user.model");
+
 const app = express();
+
+/* 🔥 CORS MUST BE FIRST */
+app.use(
+  cors({
+    origin: "http://localhost:5173", // frontend
+    credentials: true,               // 🔥 cookie allow
+  })
+);
 
 app.use(express.json());
 app.use(cookieParser());
 app.use(passport.initialize());
 
-// ✅ IMPORTANT: full callback URL with correct prefix
+/* ---------- GOOGLE AUTH ---------- */
 passport.use(
   new GoogleStrategy(
     {
@@ -40,17 +50,16 @@ passport.use(
       } catch (error) {
         return done(error, null);
       }
-    },
-  ),
+    }
+  )
 );
 
-// ✅ Initiate Google OAuth
+/* ---------- ROUTES ---------- */
 app.get(
   "/api/auth/google",
-  passport.authenticate("google", { scope: ["profile", "email"] }),
+  passport.authenticate("google", { scope: ["profile", "email"] })
 );
 
-// ✅ Callback Route
 app.get(
   "/api/auth/google/callback",
   passport.authenticate("google", { session: false }),
@@ -64,9 +73,9 @@ app.get(
       secure: false,
       sameSite: "lax",
     });
-    res.json({ message: "Google login successful" });
-    //res.redirect('http://localhost:5173');
-  },
+
+    res.redirect("http://localhost:5173/user");
+  }
 );
 
 module.exports = app;

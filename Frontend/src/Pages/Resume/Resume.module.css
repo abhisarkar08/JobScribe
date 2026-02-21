@@ -158,17 +158,21 @@
   margin-bottom: 1.5rem;
 }
 
+/* ---------- SCORE ---------- */
 .scoreCircle {
   width: 4.5rem;
   height: 4.5rem;
   border-radius: 50%;
-  background: conic-gradient(#22c55e 85%, #e5e7eb 0);
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   font-weight: 700;
   font-size: 1.3rem;
   color: #0f172a;
+
+  /* 🔥 IMPORTANT: background JS se aayega */
 }
 
 /* ---------- BREAKDOWN ---------- */

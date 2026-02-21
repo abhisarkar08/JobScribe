@@ -6,11 +6,18 @@ const JobContextProvider = ({ children }) => {
   /* APP */
   const [appName] = useState("JobScribe");
 
-  /* JD DATA (GLOBAL) */
+  /* JD DATA */
   const [jdData, setJdData] = useState({
     text: "",
     matchedSkills: [],
     missingSkills: [],
+  });
+
+  /* 🔥 RESUME DATA (NEW & REQUIRED) */
+  const [resumeData, setResumeData] = useState({
+    file: null,
+    atsScore: 0,
+    skills: [],
   });
 
   const value = {
@@ -18,6 +25,9 @@ const JobContextProvider = ({ children }) => {
 
     jdData,
     setJdData,
+
+    resumeData,
+    setResumeData,
   };
 
   return (

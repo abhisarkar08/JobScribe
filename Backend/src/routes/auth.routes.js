@@ -8,4 +8,7 @@ router.post("/login", authcontroller.login);
 router.post("/logout", authMiddleware, authcontroller.logout);
 router.delete("/delete", authMiddleware, authcontroller.deletea);
 
+router.get("/me", authMiddleware, authcontroller.me);
+router.put("/update", authMiddleware, authcontroller.updateProfile);
+
 module.exports = router;

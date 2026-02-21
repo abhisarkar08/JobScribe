@@ -1,34 +1,61 @@
 import { useState } from "react";
-import styles from './Register.module.css'
 import { useNavigate } from "react-router-dom";
+import api from "../../Api/Axioscon";
+import styles from "./Register.module.css";
 
 const Register = () => {
-  const navig = useNavigate();
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     email: "",
-    password: ""
+    password: "",
   });
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form Data:", formData);
+    setError("");
+
+    if (!formData.firstName || !formData.email || !formData.password) {
+      setError("Please fill all required fields");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await api.post("/auth/register", {
+        fullName: {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+        },
+        email: formData.email,
+        password: formData.password,
+      });
+
+      navigate("/user"); // or /login
+    } catch (err) {
+      setError(err?.response?.data?.message || "Registration failed");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className={styles.page}>
       <div className={styles.register}>
-        {/* Left Section */}
+        {/* LEFT */}
         <div className={styles.left}>
           <h2>
             Optimize Your Resume
@@ -38,13 +65,18 @@ const Register = () => {
           <img src="/illus.png" alt="illustration" />
         </div>
 
-        {/* Right Section */}
+        {/* RIGHT */}
         <div className={styles.right}>
           <h2>Create Account</h2>
 
-          {/* 👇 FORM starts here but UI flow same */}
           <form onSubmit={handleSubmit}>
-            <button type="button" className={styles.googleBtn}>
+            <button
+              type="button"
+              className={styles.googleBtn}
+              onClick={() =>
+                (window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`)
+              }
+            >
               <img src="/google.jpg" alt="google" />
               Sign up with Google
             </button>
@@ -59,6 +91,7 @@ const Register = () => {
                 value={formData.firstName}
                 onChange={handleChange}
               />
+
               <input
                 type="text"
                 name="lastName"
@@ -84,15 +117,16 @@ const Register = () => {
               onChange={handleChange}
             />
 
-            <button type="submit" className={styles.createBtn}>
-              Create Account
+            {error && <p className={styles.error}>{error}</p>}
+
+            <button type="submit" className={styles.createBtn} disabled={loading}>
+              {loading ? "Creating..." : "Create Account"}
             </button>
           </form>
-          {/* 👆 FORM end */}
 
           <p className={styles.loginText}>
             Already have an account?{" "}
-            <span onClick={() => navig('/login')}>Log in</span>
+            <span onClick={() => navigate("/login")}>Log in</span>
           </p>
         </div>
       </div>
