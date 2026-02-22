@@ -3,43 +3,67 @@ const cookieParser = require("cookie-parser");
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
 const cors = require("cors");
+const path = require("path");
 const { Strategy: GoogleStrategy } = require("passport-google-oauth20");
-const user = require("./models/user.model");
+
+const User = require("./models/user.model");
 
 const app = express();
 
-/* 🔥 CORS MUST BE FIRST */
-app.use(
-  cors({
-    origin: "http://localhost:5173", // frontend
-    credentials: true,               // 🔥 cookie allow
-  })
-);
+/* =====================================================
+   🔥 MIDDLEWARES
+===================================================== */
 
+// JSON & cookies
 app.use(express.json());
 app.use(cookieParser());
+
+// Passport
 app.use(passport.initialize());
 
-/* ---------- GOOGLE AUTH ---------- */
+/* =====================================================
+   🔥 CORS (ONLY FOR DEV)
+   👉 Production me frontend same origin hota hai
+===================================================== */
+if (process.env.NODE_ENV !== "production") {
+  app.use(
+    cors({
+      origin: process.env.CLIENT_URL || "http://localhost:5173",
+      credentials: true,
+    })
+  );
+}
+
+/* =====================================================
+   🔥 STATIC FRONTEND (BUILD FILES)
+===================================================== */
+app.use(express.static(path.join(__dirname, "../public")));
+
+/* =====================================================
+   🔥 GOOGLE AUTH STRATEGY
+===================================================== */
 passport.use(
   new GoogleStrategy(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "http://localhost:3000/api/auth/google/callback",
+      callbackURL: `${process.env.SERVER_URL}/api/auth/google/callback`,
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
         const email = profile.emails?.[0]?.value;
-        let existingUser = await user.findOne({ email });
+
+        let existingUser = await User.findOne({ email });
 
         if (!existingUser) {
-          existingUser = await user.create({
+          existingUser = await User.create({
             email,
             fullName: {
               firstName:
-                profile.name.givenName || profile.displayName || "user",
-              lastName: profile.name.familyName || "",
+                profile.name?.givenName ||
+                profile.displayName ||
+                "User",
+              lastName: profile.name?.familyName || "",
             },
             googleId: profile.id,
             provider: "google",
@@ -47,35 +71,59 @@ passport.use(
         }
 
         return done(null, existingUser);
-      } catch (error) {
-        return done(error, null);
+      } catch (err) {
+        return done(err, null);
       }
     }
   )
 );
 
-/* ---------- ROUTES ---------- */
+/* =====================================================
+   🔥 AUTH ROUTES
+===================================================== */
+
 app.get(
   "/api/auth/google",
-  passport.authenticate("google", { scope: ["profile", "email"] })
+  passport.authenticate("google", {
+    scope: ["profile", "email"],
+  })
 );
 
 app.get(
   "/api/auth/google/callback",
   passport.authenticate("google", { session: false }),
   (req, res) => {
-    const token = jwt.sign({ id: req.user.id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
-    });
+    const token = jwt.sign(
+      { id: req.user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: false,
+      secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
     });
 
-    res.redirect("http://localhost:5173/user");
+    // 🔥 DEV vs PROD redirect
+    if (process.env.NODE_ENV === "production") {
+      res.redirect("/user");
+    } else {
+      res.redirect(`${process.env.CLIENT_URL}/user`);
+    }
   }
 );
+
+/* =====================================================
+   🔥 API ROUTES (example)
+===================================================== */
+// app.use("/api/user", require("./routes/user.routes"));
+
+/* =====================================================
+   🔥 REACT ROUTER FALLBACK
+===================================================== */
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../public/index.html"));
+});
 
 module.exports = app;
