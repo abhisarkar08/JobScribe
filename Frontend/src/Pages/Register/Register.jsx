@@ -90,9 +90,9 @@ const Register = () => {
             <button
               type="button"
               className={styles.googleBtn}
-              onClick={() =>
-                (window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`)
-              }
+              onClick={() => {
+                window.location.href = "/api/auth/google";
+              }}
             >
               <img src="/google.jpg" alt="google" />
               Sign up with Google
