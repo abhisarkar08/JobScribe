@@ -341,7 +341,16 @@
 /* =========================
    RESPONSIVE
 ========================= */
-@media (max-width: 768px) {
+@media (max-width: 569px) {
+  .section1 img{
+    width: 100%;
+    max-width: 75rem;
+  }
+  .section2 {
+    min-height: auto;      /* 🔥 content based height */
+    padding-top: 30vh;     /* image overlap ke liye */
+    padding-bottom: 4rem; /* thoda breathing space */
+  }
   .section4 {
     padding: 8rem 1.25rem 5rem;
   }
@@ -352,5 +361,13 @@
 
   .faqQuestion {
     font-size: 1rem;
+  }
+}
+@media (min-width: 570px) and (max-width: 1496px) {
+  .section1 img {
+    width: 100%;
+    max-width: 75rem;
+
+    transform: translateY(38%) !important; /* 👈 niche le jaata hai */
   }
 }

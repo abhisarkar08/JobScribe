@@ -1,21 +1,21 @@
-import React from 'react'
-import styles from './Footer.module.css'
+import React, { useContext } from "react"
+import styles from "./Footer.module.css"
 import { JobContext } from "../../Context/JobContext"
-import { useContext } from "react"
+import { Link } from "react-router-dom"
 
 const Footer = () => {
   const { appName } = useContext(JobContext)
+
   return (
     <footer className={styles.footer}>
       <div className={styles.top}>
-
         {/* LEFT */}
         <div className={styles.brand}>
           <div className={styles.logoRow}>
             <div className={styles.logo}>
               <img src="/logoo.png" alt={appName} />
             </div>
-            <span className={styles.name}>JobScribe</span>
+            <span className={styles.name}>{appName}</span>
           </div>
 
           <p className={styles.desc}>
@@ -37,23 +37,22 @@ const Footer = () => {
         <div className={styles.links}>
           <div>
             <h4>Pages</h4>
-            <a href="#">Home</a>
-            <a href="#">Features</a>
-            <a href="#">About</a>
-            <a href="#">Pricing</a>
+            <Link to="/">Home</Link>
+            <Link to="/#features">Features</Link>
+            <Link to="/#about">About</Link>
+            <Link to="/#pricing">Pricing</Link>
           </div>
 
           <div>
             <h4>Product</h4>
-            <a href="#">Resume ATS</a>
-            <a href="#">JD Match</a>
-            <a href="#">Dashboard</a>
-            <a href="#">Analytics</a>
+            <Link to="/resume">Resume ATS</Link>
+            <Link to="/JD">JD Match</Link>
+            <Link to="/dashboard">Dashboard</Link>
+            <Link to="/dashboard">Analytics</Link>
           </div>
         </div>
       </div>
 
-      {/* SIMPLE COPYRIGHT */}
       <p className={styles.copy}>
         © 2026 Created by Abhishek Sarkar. Built for job seekers.
       </p>
