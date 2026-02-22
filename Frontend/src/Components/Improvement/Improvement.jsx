@@ -12,6 +12,7 @@ export default function Improvement() {
   const [suggestions, setSuggestions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [isFallback, setIsFallback] = useState(false); // 🔥 NEW
 
   useEffect(() => {
     if (!jdText) {
@@ -31,12 +32,12 @@ export default function Improvement() {
             ? res.data.suggestions
             : []
         );
+
+        // 🔥 fallback detect
+        setIsFallback(res.data.source === "fallback");
       } catch (err) {
-        if (err.response?.status === 429) {
-          setError("AI limit reached. Try again later.");
-        } else {
-          setError("Failed to generate improvements");
-        }
+        // ❌ ab 429 pe error nahi dikhana
+        setError("Failed to generate improvements");
       } finally {
         setLoading(false);
       }
@@ -59,6 +60,14 @@ export default function Improvement() {
 
       <main className={styles.container}>
         {loading && <p>Analyzing resume...</p>}
+
+        {/* 🔥 fallback info */}
+        {!loading && isFallback && (
+          <p className={styles.fallbackNote}>
+            High demand right now — showing basic resume improvement tips.
+          </p>
+        )}
+
         {error && <p className={styles.error}>{error}</p>}
 
         {!loading && !error && (

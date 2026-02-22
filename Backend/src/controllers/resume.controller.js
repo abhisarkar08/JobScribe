@@ -8,6 +8,10 @@ const {
   generateImprovementSuggestions,
   generateInterviewQuestions,
 } = require("../services/ai.service");
+const {
+  basicInterviewQuestions,
+  basicImprovementSuggestions,
+} = require("../utils/aiFallBack");
 
 exports.uploadResume = async (req, res) => {
   try {
@@ -220,16 +224,19 @@ exports.improveResumeController = async (req, res) => {
         : Object.values(suggestions).flat(),
     });
   } catch (error) {
-    console.error("IMPROVE ERROR:", error.message);
+  console.error("IMPROVE ERROR:", error.message);
 
-    if (error.status === 429) {
-      return res.status(429).json({
-        message: "AI limit reached. Please try again later.",
-      });
-    }
-
-    res.status(500).json({ message: "Improvement failed" });
+  if (error.status === 429) {
+    return res.status(200).json({
+      success: true,
+      source: "fallback",
+      suggestions: basicImprovementSuggestions,
+      message: "AI limit reached. Showing basic resume tips.",
+    });
   }
+
+  res.status(500).json({ message: "Improvement failed" });
+}
 };
 
 exports.generateInterviewController = async (req, res) => {
@@ -263,18 +270,21 @@ exports.generateInterviewController = async (req, res) => {
       questions: Object.values(questions).flat(),
     });
   } catch (error) {
-    console.error("INTERVIEW ERROR:", error.message);
+  console.error("INTERVIEW ERROR:", error.message);
 
-    if (error.status === 429) {
-      return res.status(429).json({
-        message: "AI limit reached. Please try again later.",
-      });
-    }
-
-    res.status(500).json({
-      message: "Interview question generation failed",
+  if (error.status === 429) {
+    return res.status(200).json({
+      success: true,
+      source: "fallback",
+      questions: basicInterviewQuestions,
+      message: "AI limit reached. Showing basic interview questions.",
     });
   }
+
+  res.status(500).json({
+    message: "Interview question generation failed",
+  });
+}
 };
 
 exports.deleteResume = async (req, res) => {
