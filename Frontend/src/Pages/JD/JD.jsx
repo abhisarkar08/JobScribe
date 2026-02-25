@@ -10,19 +10,19 @@ import { motion, AnimatePresence } from "framer-motion";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0 }
+  visible: { opacity: 1, y: 0 },
 };
 
 const stagger = {
   hidden: {},
   visible: {
-    transition: { staggerChildren: 0.15 }
-  }
+    transition: { staggerChildren: 0.15 },
+  },
 };
 
 const scaleFade = {
   hidden: { opacity: 0, scale: 0.95 },
-  visible: { opacity: 1, scale: 1 }
+  visible: { opacity: 1, scale: 1 },
 };
 
 const JD = () => {
@@ -50,7 +50,7 @@ const JD = () => {
 
   useEffect(() => {
     if (jdData.resumeId && resumes.length) {
-      const found = resumes.find(r => r._id === jdData.resumeId);
+      const found = resumes.find((r) => r._id === jdData.resumeId);
       if (found) setSelectedResume(found);
     }
   }, [jdData.resumeId, resumes]);
@@ -140,7 +140,7 @@ const JD = () => {
               value={jdText}
               onChange={(e) => {
                 setJdText(e.target.value);
-                setJdData(prev => ({ ...prev, text: e.target.value }));
+                setJdData((prev) => ({ ...prev, text: e.target.value }));
               }}
             />
 
@@ -184,7 +184,7 @@ const JD = () => {
                 animate="visible"
               >
                 {matched.length ? (
-                  matched.map(skill => (
+                  matched.map((skill) => (
                     <motion.span
                       key={skill}
                       className={styles.matched}
@@ -195,9 +195,7 @@ const JD = () => {
                     </motion.span>
                   ))
                 ) : (
-                  <span className={styles.muted}>
-                    No matched skills yet
-                  </span>
+                  <span className={styles.muted}>No matched skills yet</span>
                 )}
               </motion.div>
             </motion.div>
@@ -213,7 +211,7 @@ const JD = () => {
                 animate="visible"
               >
                 {missing.length ? (
-                  missing.map(skill => (
+                  missing.map((skill) => (
                     <motion.span
                       key={skill}
                       className={styles.missing}
@@ -224,9 +222,7 @@ const JD = () => {
                     </motion.span>
                   ))
                 ) : (
-                  <span className={styles.muted}>
-                    No missing skills
-                  </span>
+                  <span className={styles.muted}>No missing skills</span>
                 )}
               </motion.div>
             </motion.div>
@@ -282,13 +278,11 @@ const JD = () => {
               {resumes.length === 0 && <p>No resumes uploaded yet</p>}
 
               <ul className={styles.resumeList}>
-                {resumes.map(r => (
+                {resumes.map((r) => (
                   <li
                     key={r._id}
                     className={
-                      selectedResume?._id === r._id
-                        ? styles.active
-                        : ""
+                      selectedResume?._id === r._id ? styles.active : ""
                     }
                     onClick={() => setSelectedResume(r)}
                   >
@@ -299,9 +293,7 @@ const JD = () => {
               </ul>
 
               <div className={styles.modalActions}>
-                <button onClick={() => setShowModal(false)}>
-                  Cancel
-                </button>
+                <button onClick={() => setShowModal(false)}>Cancel</button>
 
                 <button
                   onClick={handleMatch}
