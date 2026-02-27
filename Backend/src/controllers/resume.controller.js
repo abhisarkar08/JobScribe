@@ -19,7 +19,7 @@ exports.uploadResume = async (req, res) => {
       return res.status(400).json({ message: "No file uploaded" });
     }
 
-    // 🔥 Upload to Cloudinary (PDF)
+    // 1️⃣ Cloudinary upload (must succeed)
     const cloudRes = await new Promise((resolve, reject) => {
       cloudinary.uploader.upload_stream(
         {
@@ -33,18 +33,32 @@ exports.uploadResume = async (req, res) => {
       ).end(req.file.buffer);
     });
 
-    // 🔥 Parse PDF directly from buffer
+    // 2️⃣ PDF Parse (must succeed)
     const data = await pdfParse(req.file.buffer);
-
     const extractedText = data.text
       .replace(/\r\n/g, "\n")
       .replace(/\n{2,}/g, "\n")
       .replace(/[ \t]{2,}/g, " ")
       .trim();
 
-    const { analyzeWithFallback } = require("../services/resumeHybrid.service");
-    const analysis = await analyzeWithFallback(extractedText);
+    // 3️⃣ AI ANALYSIS (🔥 SAFE ZONE)
+    let analysis = null;
+    try {
+      const { analyzeWithFallback } = require(
+        "../services/resumeHybrid.service"
+      );
+      analysis = await analyzeWithFallback(extractedText);
+    } catch (aiError) {
+      console.error("AI ANALYSIS FAILED:", aiError.message);
+      analysis = {
+        score: 0,
+        skills: [],
+        source: "fallback",
+        error: "AI failed during upload",
+      };
+    }
 
+    // 4️⃣ DB SAVE (🔥 NEVER FAIL)
     const resume = await Resume.create({
       user: req.user.id,
       originalFileName: req.file.originalname,
@@ -54,16 +68,15 @@ exports.uploadResume = async (req, res) => {
     });
 
     return res.status(200).json({
-      message: "Resume uploaded successfully",
+      success: true,
       resumeId: resume._id,
       resumeUrl: resume.resumeUrl,
-      analysis: resume.analysis,
+      analysisSource: analysis?.source || "ai",
     });
   } catch (error) {
     console.error("UPLOAD ERROR:", error);
     return res.status(500).json({
       message: "Resume upload failed",
-      error: error.message,
     });
   }
 };
