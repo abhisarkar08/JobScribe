@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import styles from "./Resume.module.css";
 import { JobContext } from "../../Context/JobContext";
 import api from "../../Api/Axioscon";
@@ -9,22 +9,50 @@ import { motion } from "framer-motion";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0 }
+  visible: { opacity: 1, y: 0 },
 };
 
 const stagger = {
   hidden: {},
   visible: {
-    transition: { staggerChildren: 0.15 }
-  }
+    transition: { staggerChildren: 0.15 },
+  },
 };
 
 const Resume = () => {
+  /* 🔥 CONTEXT FIRST (IMPORTANT) */
   const { resumeData, setResumeData } = useContext(JobContext);
 
   const [file, setFile] = useState(resumeData?.file || null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  /* =====================================================
+     🔥 LOAD ATS FROM DB ON PAGE LOAD
+  ===================================================== */
+  useEffect(() => {
+    const loadLatestATS = async () => {
+      try {
+        const res = await api.get("/resume/my-resumes");
+        const latest = res.data?.resumes?.[0];
+
+        if (latest?.analysis) {
+          console.log("ATS loaded from DB:", latest.analysis);
+
+          setResumeData((prev) => ({
+            ...prev,
+            resumeId: latest._id,
+            atsScore: latest.analysis.score ?? 0,
+            skills: latest.analysis.skills ?? [],
+          }));
+        }
+      } catch (err) {
+        console.error("Failed to load ATS:", err);
+      }
+    };
+
+    loadLatestATS();
+  }, [setResumeData]);
 
   /* ---------- ATS SCORE LOGIC ---------- */
   const score = resumeData?.atsScore ?? 0;
@@ -55,6 +83,9 @@ const Resume = () => {
     });
   };
 
+  /* =====================================================
+     🔥 UPLOAD RESUME (SAFE + NO ATS RESET)
+  ===================================================== */
   const handleGenerate = async () => {
     if (!file) {
       const msg = "Please upload a resume first";
@@ -75,18 +106,23 @@ const Resume = () => {
       });
 
       const { resumeId, analysis } = res.data;
+      const safeAnalysis = analysis || {};
 
-// 🔥 SAFE DEFAULTS
-const safeAnalysis = analysis || {};
+      setResumeData((prev) => ({
+        ...prev,
+        file,
+        resumeId,
+        atsScore:
+          safeAnalysis.score !== undefined
+            ? safeAnalysis.score
+            : prev.atsScore,
+        skills:
+          safeAnalysis.skills?.length
+            ? safeAnalysis.skills
+            : prev.skills,
+      }));
 
-setResumeData({
-  file,
-  resumeId,
-  atsScore: safeAnalysis.score ?? 0,
-  skills: safeAnalysis.skills ?? [],
-});
-
-toast.success("Resume uploaded successfully 🚀");
+      toast.success("Resume uploaded successfully 🚀");
     } catch (err) {
       const msg =
         err?.response?.data?.message || "Resume upload failed";
@@ -97,6 +133,9 @@ toast.success("Resume uploaded successfully 🚀");
     }
   };
 
+  /* =====================================================
+     🔥 UI
+  ===================================================== */
   return (
     <div className={styles.page}>
       <motion.div
@@ -106,13 +145,8 @@ toast.success("Resume uploaded successfully 🚀");
         animate="visible"
       >
         {/* ---------- LEFT ---------- */}
-        <motion.section
-          className={styles.left}
-          variants={fadeUp}
-        >
-          <motion.h1 variants={fadeUp}>
-            Analyze Your Resume
-          </motion.h1>
+        <motion.section className={styles.left} variants={fadeUp}>
+          <motion.h1 variants={fadeUp}>Analyze Your Resume</motion.h1>
 
           <motion.p variants={fadeUp}>
             Get Instant <span>ATS Score</span> & Detailed Feedback
@@ -198,10 +232,7 @@ toast.success("Resume uploaded successfully 🚀");
         </motion.section>
 
         {/* ---------- RIGHT ---------- */}
-        <motion.section
-          className={styles.right}
-          variants={fadeUp}
-        >
+        <motion.section className={styles.right} variants={fadeUp}>
           <motion.div
             className={styles.reportCard}
             whileHover={{ y: -4 }}
