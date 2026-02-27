@@ -1,5 +1,3 @@
-const mongoose = require("mongoose");
-
 const resumeSchema = new mongoose.Schema(
   {
     user: {
@@ -17,7 +15,7 @@ const resumeSchema = new mongoose.Schema(
     },
     extractedText: {
       type: String,
-      required: true,
+      default: "", // ✅ FIX
     },
     analysis: {
       type: Object,

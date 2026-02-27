@@ -14,12 +14,17 @@ const {
 } = require("../utils/aiFallBack");
 
 exports.uploadResume = async (req, res) => {
+  console.log("➡️ Upload API hit");
+
   let cloudRes;
 
   try {
     if (!req.file) {
+      console.error("❌ No file in request");
       return res.status(400).json({ message: "No file uploaded" });
     }
+
+    console.log("✅ File received:", req.file.originalname);
 
     // 1️⃣ Cloudinary upload
     cloudRes = await new Promise((resolve, reject) => {
@@ -29,24 +34,32 @@ exports.uploadResume = async (req, res) => {
           resource_type: "raw",
         },
         (error, result) => {
-          if (error) reject(error);
-          else resolve(result);
+          if (error) {
+            console.error("❌ Cloudinary error:", error);
+            reject(error);
+          } else {
+            console.log("✅ Cloudinary upload success");
+            resolve(result);
+          }
         }
       ).end(req.file.buffer);
     });
 
-    // 2️⃣ PDF PARSE (safe)
+    // 2️⃣ PDF parse (SAFE)
     let extractedText = "";
     try {
       const data = await pdfParse(req.file.buffer);
       extractedText = data.text?.trim() || "";
+      console.log(
+        "📄 PDF parsed, text length:",
+        extractedText.length
+      );
     } catch (pdfErr) {
-      console.error("PDF PARSE FAILED:", pdfErr.message);
-      extractedText = "";
+      console.error("⚠️ PDF parse failed:", pdfErr.message);
     }
 
-    // 3️⃣ AI ANALYSIS (safe)
-    let analysis = null;
+    // 3️⃣ AI analysis (SAFE)
+    let analysis = {};
     try {
       const { analyzeWithFallback } = require(
         "../services/resumeHybrid.service"
@@ -59,17 +72,18 @@ exports.uploadResume = async (req, res) => {
             source: "fallback",
             reason: "No text extracted",
           };
+      console.log("🤖 AI analysis done");
     } catch (aiErr) {
-      console.error("AI FAILED:", aiErr.message);
+      console.error("⚠️ AI failed:", aiErr.message);
       analysis = {
         score: 0,
         skills: [],
         source: "fallback",
-        reason: "AI failed",
+        reason: "AI error",
       };
     }
 
-    // 4️⃣ DB SAVE (never fail)
+    // 4️⃣ DB SAVE
     const resume = await Resume.create({
       user: req.user.id,
       originalFileName: req.file.originalname,
@@ -78,19 +92,17 @@ exports.uploadResume = async (req, res) => {
       analysis,
     });
 
+    console.log("✅ Resume saved in DB:", resume._id);
+
     return res.status(200).json({
       success: true,
       resumeId: resume._id,
-      analysisSource: analysis.source,
     });
   } catch (error) {
-    console.error("UPLOAD HARD FAIL:", error.message);
+    console.error("🔥 UPLOAD HARD FAIL:", error.message);
 
-    // 🔥 IMPORTANT: Cloudinary success but backend failed
-    return res.status(200).json({
-      success: true,
-      warning: "Uploaded but analysis incomplete",
-      resumeUrl: cloudRes?.secure_url,
+    return res.status(500).json({
+      message: "Resume upload failed",
     });
   }
 };
