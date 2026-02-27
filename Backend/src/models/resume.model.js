@@ -1,3 +1,5 @@
+const mongoose = require("mongoose"); // 🔥 MISSING LINE
+
 const resumeSchema = new mongoose.Schema(
   {
     user: {
@@ -15,7 +17,7 @@ const resumeSchema = new mongoose.Schema(
     },
     extractedText: {
       type: String,
-      default: "", // ✅ FIX
+      default: "",
     },
     analysis: {
       type: Object,
