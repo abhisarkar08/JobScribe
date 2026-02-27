@@ -76,14 +76,17 @@ const Resume = () => {
 
       const { resumeId, analysis } = res.data;
 
-      setResumeData({
-        file,
-        resumeId,
-        atsScore: analysis.score,
-        skills: analysis.skills || [],
-      });
+// 🔥 SAFE DEFAULTS
+const safeAnalysis = analysis || {};
 
-      toast.success("ATS report generated successfully 🚀");
+setResumeData({
+  file,
+  resumeId,
+  atsScore: safeAnalysis.score ?? 0,
+  skills: safeAnalysis.skills ?? [],
+});
+
+toast.success("Resume uploaded successfully 🚀");
     } catch (err) {
       const msg =
         err?.response?.data?.message || "Resume upload failed";
