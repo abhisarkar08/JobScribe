@@ -65,20 +65,20 @@ passport.use(
   )
 );
 
-/* ===================== API ROUTES (🔥 FIRST) ===================== */
+/* ===================== API ROUTES ===================== */
 app.use("/api/auth", authRoutes);
 app.use("/api/resume", resumeRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 
-/* ===================== API 404 (IMPORTANT) ===================== */
-app.use("/api/*", (req, res) => {
+/* ===================== API 404 (SAFE) ===================== */
+app.use("/api", (req, res) => {
   console.log("❌ API NOT FOUND:", req.originalUrl);
   res.status(404).json({ message: "API route not found" });
 });
 
-/* ===================== REACT FALLBACK (🔥 LAST) ===================== */
+/* ===================== REACT FALLBACK ===================== */
 app.get("*", (req, res) => {
-  console.log("➡️ React fallback hit:", req.originalUrl);
+  console.log("➡️ React fallback:", req.originalUrl);
   res.sendFile(path.join(__dirname, "../public/index.html"));
 });
 
