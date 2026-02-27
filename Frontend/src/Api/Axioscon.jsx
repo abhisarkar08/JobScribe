@@ -1,8 +1,11 @@
 import axios from "axios";
 
 const instance = axios.create({
-  baseURL: "/api",
-  withCredentials: true, // 🔥 VERY IMPORTANT (cookies)
+  baseURL:
+    import.meta.env.MODE === "production"
+      ? "https://jobscribe-43eq.onrender.com/api"
+      : "http://localhost:3000/api",
+  withCredentials: true,
 });
 
 export default instance;
