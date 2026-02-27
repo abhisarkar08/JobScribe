@@ -8,12 +8,12 @@ const { Strategy: GoogleStrategy } = require("passport-google-oauth20");
 
 const User = require("./models/user.model");
 const authRoutes = require("./routes/auth.routes");
-const resumeRoutes = require("./routes/resume.routes");
-const dashboardRoutes = require("./routes/dashboard.routes");
+const resumeRoutes = require("./routes/resume.routes");      // 🔥 ADD
+const dashboardRoutes = require("./routes/dashboard.routes"); // 🔥 ADD
 
 const app = express();
 
-/* ===================== MIDDLEWARE ===================== */
+/* ============ MIDDLEWARES ============ */
 app.use(express.json());
 app.use(cookieParser());
 app.use(passport.initialize());
@@ -27,10 +27,10 @@ if (process.env.NODE_ENV !== "production") {
   );
 }
 
-/* ===================== STATIC ===================== */
+/* ============ STATIC FRONTEND ============ */
 app.use(express.static(path.join(__dirname, "../public")));
 
-/* ===================== GOOGLE AUTH ===================== */
+/* ============ GOOGLE AUTH ============ */
 passport.use(
   new GoogleStrategy(
     {
@@ -65,20 +65,15 @@ passport.use(
   )
 );
 
-/* ===================== API ROUTES ===================== */
+/* ============ AUTH ROUTES ============ */
 app.use("/api/auth", authRoutes);
+
+/* 🔥🔥 MISSING ROUTES — THIS WAS THE BUG 🔥🔥 */
 app.use("/api/resume", resumeRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 
-/* ===================== API 404 (SAFE) ===================== */
-app.use("/api", (req, res) => {
-  console.log("❌ API NOT FOUND:", req.originalUrl);
-  res.status(404).json({ message: "API route not found" });
-});
-
-/* ===================== REACT FALLBACK ===================== */
-app.get("*", (req, res) => {
-  console.log("➡️ React fallback:", req.originalUrl);
+/* ============ REACT FALLBACK (KEEP *name) ============ */
+app.get("*name", (req, res) => {
   res.sendFile(path.join(__dirname, "../public/index.html"));
 });
 
