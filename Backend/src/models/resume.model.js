@@ -11,6 +11,10 @@ const resumeSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    resumeUrl: {
+      type: String,
+      required: true,
+    },
     extractedText: {
       type: String,
       required: true,
@@ -20,7 +24,7 @@ const resumeSchema = new mongoose.Schema(
       default: {},
     },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 module.exports = mongoose.model("Resume", resumeSchema);

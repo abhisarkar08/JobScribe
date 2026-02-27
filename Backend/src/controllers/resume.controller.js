@@ -1,4 +1,4 @@
-const fs = require("fs");
+const cloudinary = require("../config/cloudinary");
 const pdfParse = require("pdf-parse");
 const Resume = require("../models/resume.model");
 const { resumeAnalysis } = require("../services/resumeAnalysis.service");
@@ -19,10 +19,24 @@ exports.uploadResume = async (req, res) => {
       return res.status(400).json({ message: "No file uploaded" });
     }
 
-    const fileBuffer = fs.readFileSync(req.file.path);
-    const data = await pdfParse(fileBuffer);
+    // 🔥 Upload to Cloudinary (PDF)
+    const cloudRes = await new Promise((resolve, reject) => {
+      cloudinary.uploader.upload_stream(
+        {
+          folder: "jobscribe/resumes",
+          resource_type: "raw",
+        },
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result);
+        }
+      ).end(req.file.buffer);
+    });
 
-    let extractedText = data.text
+    // 🔥 Parse PDF directly from buffer
+    const data = await pdfParse(req.file.buffer);
+
+    const extractedText = data.text
       .replace(/\r\n/g, "\n")
       .replace(/\n{2,}/g, "\n")
       .replace(/[ \t]{2,}/g, " ")
@@ -34,21 +48,21 @@ exports.uploadResume = async (req, res) => {
     const resume = await Resume.create({
       user: req.user.id,
       originalFileName: req.file.originalname,
+      resumeUrl: cloudRes.secure_url,
       extractedText,
       analysis,
     });
 
-    fs.unlinkSync(req.file.path);
-
     return res.status(200).json({
-      message: "Resume uploaded & parsed successfully",
+      message: "Resume uploaded successfully",
       resumeId: resume._id,
+      resumeUrl: resume.resumeUrl,
       analysis: resume.analysis,
     });
   } catch (error) {
-    console.error(error);
+    console.error("UPLOAD ERROR:", error);
     return res.status(500).json({
-      message: "Resume processing failed",
+      message: "Resume upload failed",
       error: error.message,
     });
   }
