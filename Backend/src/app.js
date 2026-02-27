@@ -30,7 +30,7 @@ if (process.env.NODE_ENV !== "production") {
     cors({
       origin: process.env.CLIENT_URL || "http://localhost:5173",
       credentials: true,
-    })
+    }),
   );
 }
 
@@ -60,9 +60,7 @@ passport.use(
             email,
             fullName: {
               firstName:
-                profile.name?.givenName ||
-                profile.displayName ||
-                "User",
+                profile.name?.givenName || profile.displayName || "User",
               lastName: profile.name?.familyName || "",
             },
             googleId: profile.id,
@@ -74,8 +72,8 @@ passport.use(
       } catch (err) {
         return done(err, null);
       }
-    }
-  )
+    },
+  ),
 );
 
 /* =====================================================
@@ -86,18 +84,16 @@ app.get(
   "/api/auth/google",
   passport.authenticate("google", {
     scope: ["profile", "email"],
-  })
+  }),
 );
 
 app.get(
   "/api/auth/google/callback",
   passport.authenticate("google", { session: false }),
   (req, res) => {
-    const token = jwt.sign(
-      { id: req.user._id },
-      process.env.JWT_SECRET,
-      { expiresIn: "1h" }
-    );
+    const token = jwt.sign({ id: req.user._id }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
 
     res.cookie("token", token, {
       httpOnly: true,
@@ -111,7 +107,7 @@ app.get(
     } else {
       res.redirect(`${process.env.CLIENT_URL}/user`);
     }
-  }
+  },
 );
 
 /* =====================================================
