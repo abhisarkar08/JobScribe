@@ -5,8 +5,8 @@ const jwt = require("jsonwebtoken");
 const cors = require("cors");
 const path = require("path");
 const { Strategy: GoogleStrategy } = require("passport-google-oauth20");
-
 const User = require("./models/user.model");
+const authRoutes = require("./routes/auth.routes");
 
 const app = express();
 
@@ -114,6 +114,8 @@ app.get(
    🔥 API ROUTES (example)
 ===================================================== */
 // app.use("/api/user", require("./routes/user.routes"));
+
+app.use("/api/auth", authRoutes);
 
 /* =====================================================
    🔥 REACT ROUTER FALLBACK
