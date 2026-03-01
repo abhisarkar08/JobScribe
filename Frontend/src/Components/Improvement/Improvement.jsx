@@ -3,6 +3,55 @@ import { useNavigate, useLocation, useParams } from "react-router-dom";
 import styles from "./Improvement.module.css";
 import api from "../../Api/Axioscon";
 
+/* =====================================================
+   🔥 NORMALIZE SUGGESTIONS
+   - STRING
+   - OBJECT (skills_to_add, bullet_point_improvements, etc.)
+===================================================== */
+const normalizeSuggestions = (raw = []) => {
+  const result = [];
+
+  raw.forEach((item) => {
+    // ✅ string case
+    if (typeof item === "string") {
+      result.push(item);
+      return;
+    }
+
+    // ✅ object case (AI structured response)
+    if (typeof item === "object" && item !== null) {
+      if (Array.isArray(item.skills_to_add)) {
+        item.skills_to_add.forEach((s) =>
+          result.push(`Add skill: ${s}`)
+        );
+      }
+
+      if (Array.isArray(item.bullet_point_improvements)) {
+        result.push(...item.bullet_point_improvements);
+      }
+
+      if (Array.isArray(item.ats_keyword_improvements)) {
+        item.ats_keyword_improvements.forEach((k) =>
+          result.push(`Include ATS keyword: ${k}`)
+        );
+      }
+
+      if (
+        item.section_improvements &&
+        typeof item.section_improvements === "object"
+      ) {
+        Object.entries(item.section_improvements).forEach(
+          ([section, text]) => {
+            result.push(`${section.toUpperCase()}: ${text}`);
+          }
+        );
+      }
+    }
+  });
+
+  return result;
+};
+
 export default function Improvement() {
   const navigate = useNavigate();
   const { resumeId } = useParams();
@@ -12,7 +61,7 @@ export default function Improvement() {
   const [suggestions, setSuggestions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [isFallback, setIsFallback] = useState(false); // 🔥 NEW
+  const [isFallback, setIsFallback] = useState(false);
 
   useEffect(() => {
     if (!jdText) {
@@ -23,23 +72,20 @@ export default function Improvement() {
     const fetchImprovements = async () => {
       try {
         const res = await api.post("/resume/improve-resume", {
-  resumeId,
-  jdText,
-});
+          resumeId,
+          jdText,
+        });
 
-const s = res.data.suggestions;
+        const raw = res.data.suggestions;
 
-// 🔥 BACKEND ALREADY RETURNS ARRAY
-if (Array.isArray(s)) {
-  setSuggestions(s);
-} else {
-  setSuggestions([]);
-}
+        if (Array.isArray(raw)) {
+          setSuggestions(normalizeSuggestions(raw));
+        } else {
+          setSuggestions([]);
+        }
 
-// fallback detect
-setIsFallback(res.data.source === "fallback");
+        setIsFallback(res.data.source === "fallback");
       } catch (err) {
-        // ❌ ab 429 pe error nahi dikhana
         setError("Failed to generate improvements");
       } finally {
         setLoading(false);
@@ -64,7 +110,6 @@ setIsFallback(res.data.source === "fallback");
       <main className={styles.container}>
         {loading && <p>Analyzing resume...</p>}
 
-        {/* 🔥 fallback info */}
         {!loading && isFallback && (
           <p className={styles.fallbackNote}>
             High demand right now — showing basic resume improvement tips.
@@ -73,7 +118,11 @@ setIsFallback(res.data.source === "fallback");
 
         {error && <p className={styles.error}>{error}</p>}
 
-        {!loading && !error && (
+        {!loading && !error && suggestions.length === 0 && (
+          <p>No improvement suggestions generated.</p>
+        )}
+
+        {!loading && !error && suggestions.length > 0 && (
           <section className={styles.list}>
             {suggestions.map((item, i) => (
               <div key={i} className={styles.card}>
