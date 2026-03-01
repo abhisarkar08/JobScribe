@@ -19,8 +19,22 @@ const stagger = {
   },
 };
 
+/* =====================================================
+   🔥 SKILLS NORMALIZER (MAIN FIX)
+===================================================== */
+const normalizeSkills = (skills = []) => {
+  return skills
+    .map((s) => {
+      if (typeof s === "string") return s;
+      if (typeof s === "object" && s !== null)
+        return s.name || s.skill || "";
+      return "";
+    })
+    .filter(Boolean);
+};
+
 const Resume = () => {
-  /* 🔥 CONTEXT FIRST (IMPORTANT) */
+  /* 🔥 CONTEXT */
   const { resumeData, setResumeData } = useContext(JobContext);
 
   const [file, setFile] = useState(resumeData?.file || null);
@@ -28,7 +42,7 @@ const Resume = () => {
   const [error, setError] = useState("");
 
   /* =====================================================
-     🔥 LOAD ATS FROM DB ON PAGE LOAD
+     🔥 LOAD LATEST ATS FROM DB
   ===================================================== */
   useEffect(() => {
     const loadLatestATS = async () => {
@@ -37,13 +51,11 @@ const Resume = () => {
         const latest = res.data?.resumes?.[0];
 
         if (latest?.analysis) {
-          console.log("ATS loaded from DB:", latest.analysis);
-
           setResumeData((prev) => ({
             ...prev,
             resumeId: latest._id,
             atsScore: latest.analysis.score ?? 0,
-            skills: latest.analysis.skills ?? [],
+            skills: normalizeSkills(latest.analysis.skills),
           }));
         }
       } catch (err) {
@@ -54,7 +66,7 @@ const Resume = () => {
     loadLatestATS();
   }, [setResumeData]);
 
-  /* ---------- ATS SCORE LOGIC ---------- */
+  /* ---------- ATS SCORE ---------- */
   const score = resumeData?.atsScore ?? 0;
   const safeScore = Math.max(0, Math.min(score, 100));
 
@@ -84,7 +96,7 @@ const Resume = () => {
   };
 
   /* =====================================================
-     🔥 UPLOAD RESUME (SAFE + NO ATS RESET)
+     🔥 UPLOAD RESUME
   ===================================================== */
   const handleGenerate = async () => {
     if (!file) {
@@ -118,7 +130,7 @@ const Resume = () => {
             : prev.atsScore,
         skills:
           safeAnalysis.skills?.length
-            ? safeAnalysis.skills
+            ? normalizeSkills(safeAnalysis.skills)
             : prev.skills,
       }));
 
@@ -219,33 +231,19 @@ const Resume = () => {
               className={styles.generateBtn}
               onClick={handleGenerate}
               disabled={loading}
-              whileHover={{ scale: loading ? 1 : 1.05 }}
-              whileTap={{ scale: 0.95 }}
             >
               {loading ? "Analyzing..." : "Generate ATS Report →"}
             </motion.button>
-
-            <p className={styles.tip}>
-              💡 Add proper headings, skills & keywords for better results.
-            </p>
           </motion.div>
         </motion.section>
 
         {/* ---------- RIGHT ---------- */}
         <motion.section className={styles.right} variants={fadeUp}>
-          <motion.div
-            className={styles.reportCard}
-            whileHover={{ y: -4 }}
-          >
+          <motion.div className={styles.reportCard}>
             <h3>ATS Report Preview</h3>
 
-            <motion.div
-              className={styles.scoreBox}
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.4 }}
-            >
-              <motion.div
+            <div className={styles.scoreBox}>
+              <div
                 className={styles.scoreCircle}
                 style={{
                   background: `conic-gradient(
@@ -253,34 +251,19 @@ const Resume = () => {
                     #e5e7eb 0deg
                   )`,
                 }}
-                animate={{ scale: [1, 1.05, 1] }}
-                transition={{
-                  duration: 1.5,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                }}
               >
                 {safeScore}
-              </motion.div>
+              </div>
               <span>ATS Score</span>
-            </motion.div>
+            </div>
 
             <div className={styles.skills}>
               <h4>Skills Found</h4>
 
-              <motion.div
-                className={styles.skillTags}
-                variants={stagger}
-                initial="hidden"
-                animate="visible"
-              >
+              <div className={styles.skillTags}>
                 {resumeData?.skills?.length > 0 ? (
-                  resumeData.skills.map((s) => (
-                    <motion.span
-                      key={s}
-                      variants={fadeUp}
-                      whileHover={{ scale: 1.1 }}
-                    >
+                  resumeData.skills.map((s, i) => (
+                    <motion.span key={s + i}>
                       {s}
                     </motion.span>
                   ))
@@ -289,7 +272,7 @@ const Resume = () => {
                     No skills extracted yet
                   </span>
                 )}
-              </motion.div>
+              </div>
             </div>
           </motion.div>
         </motion.section>
