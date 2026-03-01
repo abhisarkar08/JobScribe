@@ -16,6 +16,7 @@ const JobContextProvider = ({ children }) => {
   /* 🔥 RESUME DATA (NEW & REQUIRED) */
   const [resumeData, setResumeData] = useState({
     file: null,
+    resumeId: null,
     atsScore: 0,
     skills: [],
   });
