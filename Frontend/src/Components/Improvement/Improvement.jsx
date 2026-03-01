@@ -29,42 +29,14 @@ export default function Improvement() {
 
 const s = res.data.suggestions;
 
-// 🔥 OBJECT → ARRAY (SAFE)
-let flatSuggestions = [];
-
-if (s?.skills_to_add) {
-  flatSuggestions.push(
-    ...s.skills_to_add.map(skill => `Add skill: ${skill}`)
-  );
+// 🔥 BACKEND ALREADY RETURNS ARRAY
+if (Array.isArray(s)) {
+  setSuggestions(s);
+} else {
+  setSuggestions([]);
 }
 
-if (s?.bullet_point_improvements) {
-  flatSuggestions.push(
-    ...s.bullet_point_improvements
-  );
-}
-
-if (s?.ats_keyword_improvements) {
-  flatSuggestions.push(
-    ...s.ats_keyword_improvements.map(
-      k => `Include ATS keyword: ${k}`
-    )
-  );
-}
-
-if (s?.section_improvements) {
-  Object.entries(s.section_improvements).forEach(
-    ([section, text]) => {
-      flatSuggestions.push(
-        `${section.toUpperCase()}: ${text}`
-      );
-    }
-  );
-}
-
-setSuggestions(flatSuggestions);
-
-// 🔥 fallback detect
+// fallback detect
 setIsFallback(res.data.source === "fallback");
       } catch (err) {
         // ❌ ab 429 pe error nahi dikhana
