@@ -41,31 +41,6 @@ const Resume = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  /* =====================================================
-     🔥 LOAD LATEST ATS FROM DB
-  ===================================================== */
-  useEffect(() => {
-    const loadLatestATS = async () => {
-      try {
-        const res = await api.get("/resume/my-resumes");
-        const latest = res.data?.resumes?.[0];
-
-        if (latest?.analysis) {
-          setResumeData((prev) => ({
-            ...prev,
-            resumeId: latest._id,
-            atsScore: latest.analysis.score ?? 0,
-            skills: normalizeSkills(latest.analysis.skills),
-          }));
-        }
-      } catch (err) {
-        console.error("Failed to load ATS:", err);
-      }
-    };
-
-    loadLatestATS();
-  }, [setResumeData]);
-
   /* ---------- ATS SCORE ---------- */
   const score = resumeData?.atsScore ?? 0;
   const safeScore = Math.max(0, Math.min(score, 100));
@@ -108,6 +83,15 @@ const Resume = () => {
 
     setLoading(true);
     setError("");
+
+    // 🔥 RESET BEFORE ANALYSIS
+  setResumeData({
+    file,
+    resumeId: null,
+    atsScore: 0,
+    skills: [],
+  });
+
 
     try {
       const formData = new FormData();

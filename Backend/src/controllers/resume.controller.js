@@ -97,6 +97,7 @@ exports.uploadResume = async (req, res) => {
     return res.status(200).json({
       success: true,
       resumeId: resume._id,
+      analysis: resume.analysis || { score: 0, skills: [] },
     });
   } catch (error) {
     console.error("🔥 UPLOAD HARD FAIL:", error.message);
