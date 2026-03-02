@@ -86,9 +86,7 @@ function deletea(req, res) {
 /* 🔹 GET LOGGED-IN USER */
 async function me(req, res) {
   try {
-    const currentUser = await user
-      .findById(req.user._id)
-      .select("-password");
+    const currentUser = await user.findById(req.user._id).select("-password");
 
     res.json(currentUser);
   } catch (err) {
