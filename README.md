@@ -20,6 +20,21 @@ It analyzes resumes, calculates ATS scores, matches resumes with job description
 - 👤 Profile Management
 
 ---
+## 📸 Screenshots
+
+### 🏠 Home Page
+<img src="./screenshots/home.png" width="600"/>
+
+### 🏠 Main Dashboard
+<img src="./screenshots/dashboard.png" width="600"/>
+
+### 📄 Resume Analysis
+<img src="./screenshots/resume.png" width="600"/>
+
+### 📝 JD Matching
+<img src="./screenshots/jd.png" width="600"/>
+
+---
 
 ## 🛠 Tech Stack
 
