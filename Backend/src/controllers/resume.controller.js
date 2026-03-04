@@ -28,21 +28,23 @@ exports.uploadResume = async (req, res) => {
 
     // 1️⃣ Cloudinary upload
     cloudRes = await new Promise((resolve, reject) => {
-      cloudinary.uploader.upload_stream(
-        {
-          folder: "jobscribe/resumes",
-          resource_type: "raw",
-        },
-        (error, result) => {
-          if (error) {
-            console.error("❌ Cloudinary error:", error);
-            reject(error);
-          } else {
-            console.log("✅ Cloudinary upload success");
-            resolve(result);
-          }
-        }
-      ).end(req.file.buffer);
+      cloudinary.uploader
+        .upload_stream(
+          {
+            folder: "jobscribe/resumes",
+            resource_type: "raw",
+          },
+          (error, result) => {
+            if (error) {
+              console.error("❌ Cloudinary error:", error);
+              reject(error);
+            } else {
+              console.log("✅ Cloudinary upload success");
+              resolve(result);
+            }
+          },
+        )
+        .end(req.file.buffer);
     });
 
     // 2️⃣ PDF parse (SAFE)
@@ -50,10 +52,7 @@ exports.uploadResume = async (req, res) => {
     try {
       const data = await pdfParse(req.file.buffer);
       extractedText = data.text?.trim() || "";
-      console.log(
-        "📄 PDF parsed, text length:",
-        extractedText.length
-      );
+      console.log("📄 PDF parsed, text length:", extractedText.length);
     } catch (pdfErr) {
       console.error("⚠️ PDF parse failed:", pdfErr.message);
     }
@@ -61,9 +60,9 @@ exports.uploadResume = async (req, res) => {
     // 3️⃣ AI analysis (SAFE)
     let analysis = {};
     try {
-      const { analyzeWithFallback } = require(
-        "../services/resumeHybrid.service"
-      );
+      const {
+        analyzeWithFallback,
+      } = require("../services/resumeHybrid.service");
       analysis = extractedText
         ? await analyzeWithFallback(extractedText)
         : {
@@ -177,12 +176,9 @@ exports.matchJDController = async (req, res) => {
       ...(jdAnalysis.tools || []),
     ];
 
-    const normalize = (skill) =>
-      skill.toLowerCase().replace(/[^a-z0-9]/g, "");
+    const normalize = (skill) => skill.toLowerCase().replace(/[^a-z0-9]/g, "");
 
-    const resumeSet = new Set(
-      resumeSkills.map((skill) => normalize(skill))
-    );
+    const resumeSet = new Set(resumeSkills.map((skill) => normalize(skill)));
 
     const matchedSkills = [];
     const missingSkills = [];
@@ -198,9 +194,7 @@ exports.matchJDController = async (req, res) => {
     const matchPercentage =
       jdSkills.length === 0
         ? 0
-        : Math.round(
-            (matchedSkills.length / jdSkills.length) * 100
-          );
+        : Math.round((matchedSkills.length / jdSkills.length) * 100);
 
     await JobMatch.create({
       user: req.user.id,
@@ -260,15 +254,13 @@ exports.improveResumeController = async (req, res) => {
 
     const missingSkills = jdSkills.filter(
       (skill) =>
-        !resumeSkills
-          .map((s) => s.toLowerCase())
-          .includes(skill.toLowerCase())
+        !resumeSkills.map((s) => s.toLowerCase()).includes(skill.toLowerCase()),
     );
 
     const suggestions = await generateImprovementSuggestions(
       resume.extractedText,
       jdText,
-      missingSkills
+      missingSkills,
     );
 
     res.json({
@@ -278,19 +270,19 @@ exports.improveResumeController = async (req, res) => {
         : Object.values(suggestions).flat(),
     });
   } catch (error) {
-  console.error("IMPROVE ERROR:", error.message);
+    console.error("IMPROVE ERROR:", error.message);
 
-  if (error.status === 429) {
-    return res.status(200).json({
-      success: true,
-      source: "fallback",
-      suggestions: basicImprovementSuggestions,
-      message: "AI limit reached. Showing basic resume tips.",
-    });
+    if (error.status === 429) {
+      return res.status(200).json({
+        success: true,
+        source: "fallback",
+        suggestions: basicImprovementSuggestions,
+        message: "AI limit reached. Showing basic resume tips.",
+      });
+    }
+
+    res.status(500).json({ message: "Improvement failed" });
   }
-
-  res.status(500).json({ message: "Improvement failed" });
-}
 };
 
 exports.generateInterviewController = async (req, res) => {
@@ -316,7 +308,7 @@ exports.generateInterviewController = async (req, res) => {
 
     const questions = await generateInterviewQuestions(
       resume.extractedText,
-      jdText
+      jdText,
     );
 
     res.json({
@@ -324,21 +316,21 @@ exports.generateInterviewController = async (req, res) => {
       questions: Object.values(questions).flat(),
     });
   } catch (error) {
-  console.error("INTERVIEW ERROR:", error.message);
+    console.error("INTERVIEW ERROR:", error.message);
 
-  if (error.status === 429) {
-    return res.status(200).json({
-      success: true,
-      source: "fallback",
-      questions: basicInterviewQuestions,
-      message: "AI limit reached. Showing basic interview questions.",
+    if (error.status === 429) {
+      return res.status(200).json({
+        success: true,
+        source: "fallback",
+        questions: basicInterviewQuestions,
+        message: "AI limit reached. Showing basic interview questions.",
+      });
+    }
+
+    res.status(500).json({
+      message: "Interview question generation failed",
     });
   }
-
-  res.status(500).json({
-    message: "Interview question generation failed",
-  });
-}
 };
 
 exports.deleteResume = async (req, res) => {
