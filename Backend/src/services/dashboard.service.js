@@ -107,17 +107,17 @@ exports.getDashboardData = async (userId) => {
     const matches = await JobMatch.find({ user: objectUserId });
 
     const resumeCards = resumes.map((r) => {
-  const match = matches.find(
-    (m) => m.resume.toString() === r._id.toString()
-  );
+      const match = matches.find(
+        (m) => m.resume.toString() === r._id.toString(),
+      );
 
-  return {
-    id: r._id, // 🔥 REQUIRED
-    name: r.originalFileName,
-    score: r.analysis?.score || 0,
-    match: match ? `${match.matchScore}%` : "—",
-  };
-});
+      return {
+        id: r._id, // 🔥 REQUIRED
+        name: r.originalFileName,
+        score: r.analysis?.score || 0,
+        match: match ? `${match.matchScore}%` : "—",
+      };
+    });
 
     /* ---------- RECENT MATCHES ---------- */
 
@@ -132,7 +132,7 @@ exports.getDashboardData = async (userId) => {
     /* ---------- READINESS ---------- */
 
     const interviewReadiness = Math.round(
-      (avgResumeScore + avgMatchPercentage) / 2
+      (avgResumeScore + avgMatchPercentage) / 2,
     );
 
     return {
