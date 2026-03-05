@@ -1,4 +1,4 @@
-const mongoose = require("mongoose"); // 🔥 MISSING LINE
+const mongoose = require("mongoose");
 
 const resumeSchema = new mongoose.Schema(
   {
@@ -24,7 +24,7 @@ const resumeSchema = new mongoose.Schema(
       default: {},
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 module.exports = mongoose.model("Resume", resumeSchema);
