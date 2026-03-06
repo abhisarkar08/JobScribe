@@ -8,7 +8,7 @@ exports.basicInterviewQuestions = [
   "Difference between SQL and NoSQL",
   "How do you handle errors in backend?",
   "Explain authentication vs authorization",
-  "What challenges did you face in development?"
+  "What challenges did you face in development?",
 ];
 
 exports.basicImprovementSuggestions = [
@@ -17,5 +17,5 @@ exports.basicImprovementSuggestions = [
   "Improve resume summary to match job role",
   "Highlight problem-solving experience",
   "Add keywords from the job description",
-  "Keep resume formatting clean and consistent"
+  "Keep resume formatting clean and consistent",
 ];
