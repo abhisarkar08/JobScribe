@@ -113,7 +113,7 @@ app.get(
 );
 
 /* =====================================================
-   🔥 API ROUTES (example)
+  API ROUTES (example)
 ===================================================== */
 // app.use("/api/user", require("./routes/user.routes"));
 
@@ -121,7 +121,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/resume", resumeRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 /* =====================================================
-   🔥 REACT ROUTER FALLBACK
+   REACT ROUTER FALLBACK
 ===================================================== */
 
 app.use("/api", (req, res) => {
