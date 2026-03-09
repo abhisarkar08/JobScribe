@@ -37,12 +37,12 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 /* =====================================================
-   🔥 STATIC FRONTEND (BUILD FILES)
+   STATIC FRONTEND (BUILD FILES)
 ===================================================== */
 app.use(express.static(path.join(__dirname, "../public")));
 
 /* =====================================================
-   🔥 GOOGLE AUTH STRATEGY
+   GOOGLE AUTH STRATEGY
 ===================================================== */
 passport.use(
   new GoogleStrategy(
@@ -115,7 +115,6 @@ app.get(
 /* =====================================================
   API ROUTES (example)
 ===================================================== */
-// app.use("/api/user", require("./routes/user.routes"));
 
 app.use("/api/auth", authRoutes);
 app.use("/api/resume", resumeRoutes);
