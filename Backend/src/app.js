@@ -13,7 +13,7 @@ const dashboardRoutes = require("./routes/dashboard.routes");
 const app = express();
 
 /* =====================================================
-   🔥 MIDDLEWARES
+   MIDDLEWARES
 ===================================================== */
 
 // JSON & cookies
