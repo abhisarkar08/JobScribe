@@ -1,10 +1,10 @@
 .footer {
   background: #f8fafc;
   padding: 4rem 6% 2rem;
-  border-top: 0.08rem solid rgba(0,0,0,0.06);
+  border-top: 0.08rem solid rgba(0, 0, 0, 0.06);
 }
 
-/* ---------- TOP ---------- */
+/* TOP */ 
 
 .top {
   display: grid;
@@ -58,7 +58,7 @@
   flex: 1;
   padding: 0.7em 1em;
   border-radius: 1.5rem;
-  border: 0.08rem solid rgba(0,0,0,0.15);
+  border: 0.08rem solid rgba(0, 0, 0, 0.15);
   font-size: 0.9rem;
 }
 
@@ -121,7 +121,7 @@
   color: #64748b;
 }
 
-/* ---------- RESPONSIVE ---------- */
+/*  RESPONSIVE  */
 
 @media (max-width: 48rem) {
   .top {

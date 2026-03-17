@@ -12,21 +12,11 @@ const dashboardRoutes = require("./routes/dashboard.routes");
 
 const app = express();
 
-/* =====================================================
-   MIDDLEWARES
-===================================================== */
-
-// JSON & cookies
+/*MIDDLEWARES */
 app.use(express.json());
 app.use(cookieParser());
-
-// Passport
 app.use(passport.initialize());
 
-/* =====================================================
-   🔥 CORS (ONLY FOR DEV)
-   👉 Production me frontend same origin hota hai
-===================================================== */
 if (process.env.NODE_ENV !== "production") {
   app.use(
     cors({
@@ -36,14 +26,9 @@ if (process.env.NODE_ENV !== "production") {
   );
 }
 
-/* =====================================================
-   STATIC FRONTEND (BUILD FILES)
-===================================================== */
 app.use(express.static(path.join(__dirname, "../public")));
 
-/* =====================================================
-   GOOGLE AUTH STRATEGY
-===================================================== */
+/* GOOGLE AUTH STRATEGY */
 passport.use(
   new GoogleStrategy(
     {
@@ -78,9 +63,7 @@ passport.use(
   ),
 );
 
-/* =====================================================
-   🔥 AUTH ROUTES
-===================================================== */
+/*AUTH ROUTES */
 
 app.get(
   "/api/auth/google",
@@ -102,8 +85,6 @@ app.get(
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
     });
-
-    // 🔥 DEV vs PROD redirect
     if (process.env.NODE_ENV === "production") {
       res.redirect("/user");
     } else {
@@ -112,19 +93,13 @@ app.get(
   },
 );
 
-/* =====================================================
-  API ROUTES (example)
-===================================================== */
 
 app.use("/api/auth", authRoutes);
 app.use("/api/resume", resumeRoutes);
 app.use("/api/dashboard", dashboardRoutes);
-/* =====================================================
-   REACT ROUTER FALLBACK
-===================================================== */
 
 app.use("/api", (req, res) => {
-  console.log("❌ API NOT FOUND:", req.originalUrl);
+  console.log("API NOT FOUND:", req.originalUrl);
   return res.status(404).json({ message: "API route not found" });
 });
 

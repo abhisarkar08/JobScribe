@@ -1,16 +1,13 @@
-/* ---------- PAGE ---------- */
 .page {
   min-height: 100vh;
   background-image: url("/jdba.svg");
   background-repeat: no-repeat;
   background-position: center top;
   background-size: cover;
-
   display: flex;
   justify-content: center;
 }
 
-/* ---------- CONTAINER ---------- */
 .container {
   width: 100%;
   max-width: 80rem;
@@ -19,7 +16,6 @@
   gap: 2rem;
 }
 
-/* ---------- LEFT ---------- */
 .left h1 {
   font-size: 2.2rem;
   color: #0f172a;
@@ -35,7 +31,6 @@
   font-weight: 600;
 }
 
-/* ---------- UPLOAD CARD ---------- */
 .uploadCard {
   margin-top: 2rem;
   background: #ffffff;
@@ -50,7 +45,6 @@
   color: #1e40af;
 }
 
-/* ---------- DROP BOX ---------- */
 .dropBox {
   border: 2px dashed #93c5fd;
   border-radius: 1rem;
@@ -82,7 +76,6 @@
   color: #64748b;
 }
 
-/* ---------- FILE ROW ---------- */
 .fileRow {
   display: flex;
   justify-content: space-between;
@@ -123,7 +116,6 @@
   color: #dc2626;
 }
 
-/* ---------- GENERATE BUTTON ---------- */
 .generateBtn {
   width: 100%;
   padding: 0.9rem;
@@ -141,7 +133,6 @@
   color: #64748b;
 }
 
-/* ---------- RIGHT REPORT CARD ---------- */
 .reportCard {
   background: #ffffff;
   padding: 2rem;
@@ -150,7 +141,6 @@
   box-shadow: 0 16px 32px rgba(37, 99, 235, 0.08);
 }
 
-/* ---------- SCORE ---------- */
 .scoreBox {
   display: flex;
   align-items: center;
@@ -158,7 +148,6 @@
   margin-bottom: 1.5rem;
 }
 
-/* ---------- SCORE ---------- */
 .scoreCircle {
   width: 4.5rem;
   height: 4.5rem;
@@ -172,10 +161,8 @@
   font-size: 1.3rem;
   color: #0f172a;
 
-  /* 🔥 IMPORTANT: background JS se aayega */
 }
 
-/* ---------- BREAKDOWN ---------- */
 .breakdown div {
   margin-bottom: 0.9rem;
 }
@@ -194,7 +181,6 @@
   border-radius: 999px;
 }
 
-/* ---------- SKILLS ---------- */
 .skills h4 {
   margin: 1.2rem 0 0.6rem;
   color: #0f172a;
@@ -214,8 +200,6 @@
   font-size: 0.85rem;
 }
 
-
-/* ---------- RESPONSIVE ---------- */
 @media (min-width: 48em) {
   .container {
     grid-template-columns: 1.2fr 0.8fr;

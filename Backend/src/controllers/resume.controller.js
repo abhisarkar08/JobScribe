@@ -14,19 +14,18 @@ const {
 } = require("../utils/aiFallBack");
 
 exports.uploadResume = async (req, res) => {
-  console.log("➡️ Upload API hit");
 
   let cloudRes;
 
   try {
     if (!req.file) {
-      console.error("❌ No file in request");
+      console.error("No file in request");
       return res.status(400).json({ message: "No file uploaded" });
     }
 
-    console.log("✅ File received:", req.file.originalname);
+    console.log("File received:", req.file.originalname);
 
-    // 1️⃣ Cloudinary upload
+    // Cloudinary upload
     cloudRes = await new Promise((resolve, reject) => {
       cloudinary.uploader
         .upload_stream(
@@ -39,7 +38,6 @@ exports.uploadResume = async (req, res) => {
               console.error("❌ Cloudinary error:", error);
               reject(error);
             } else {
-              console.log("✅ Cloudinary upload success");
               resolve(result);
             }
           },
@@ -47,7 +45,7 @@ exports.uploadResume = async (req, res) => {
         .end(req.file.buffer);
     });
 
-    // 2️⃣ PDF parse (SAFE)
+    // PDF parse
     let extractedText = "";
     try {
       const data = await pdfParse(req.file.buffer);
@@ -57,7 +55,7 @@ exports.uploadResume = async (req, res) => {
       console.error("⚠️ PDF parse failed:", pdfErr.message);
     }
 
-    // 3️⃣ AI analysis (SAFE)
+    // AI analysis
     let analysis = {};
     try {
       const {
@@ -71,9 +69,7 @@ exports.uploadResume = async (req, res) => {
             source: "fallback",
             reason: "No text extracted",
           };
-      console.log("🤖 AI analysis done");
     } catch (aiErr) {
-      console.error("⚠️ AI failed:", aiErr.message);
       analysis = {
         score: 0,
         skills: [],
@@ -82,7 +78,7 @@ exports.uploadResume = async (req, res) => {
       };
     }
 
-    // 4️⃣ DB SAVE
+    // DB SAVE
     const resume = await Resume.create({
       user: req.user.id,
       originalFileName: req.file.originalname,
@@ -91,15 +87,13 @@ exports.uploadResume = async (req, res) => {
       analysis,
     });
 
-    console.log("✅ Resume saved in DB:", resume._id);
-
     return res.status(200).json({
       success: true,
       resumeId: resume._id,
       analysis: resume.analysis || { score: 0, skills: [] },
     });
   } catch (error) {
-    console.error("🔥 UPLOAD HARD FAIL:", error.message);
+    console.error("UPLOAD HARD FAIL:", error.message);
 
     return res.status(500).json({
       message: "Resume upload failed",
@@ -168,7 +162,7 @@ exports.matchJDController = async (req, res) => {
       });
     }
 
-    const jdAnalysis = await analyzeJD(jdText); // 🔥 AI CALL
+    const jdAnalysis = await analyzeJD(jdText);
 
     const resumeSkills = resume.analysis?.skills || [];
     const jdSkills = [
@@ -217,7 +211,6 @@ exports.matchJDController = async (req, res) => {
   } catch (error) {
     console.error("MATCH ERROR:", error.message);
 
-    // 🔥 IMPORTANT: preserve 429
     if (error.status === 429) {
       return res.status(429).json({
         message: "AI limit reached. Please try again later.",

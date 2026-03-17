@@ -4,8 +4,6 @@ import api from "../../Api/Axioscon";
 import { toast } from "react-toastify";
 import { motion, AnimatePresence } from "framer-motion";
 
-/* ---------------- Animations ---------------- */
-
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
   visible: { opacity: 1, y: 0 },
@@ -23,7 +21,7 @@ const scaleFade = {
   visible: { opacity: 1, scale: 1 },
 };
 
-/* ---------------- Component ---------------- */
+/* Component */
 
 const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
@@ -39,7 +37,7 @@ const Profile = () => {
     password: "",
   });
 
-  /* 🔹 LOAD USER DATA */
+  /*LOAD USER DATA */
   useEffect(() => {
     const fetchProfile = async () => {
       try {
@@ -81,7 +79,7 @@ const Profile = () => {
         password: formData.password || undefined,
       });
 
-      toast.success("Profile updated successfully ✅");
+      toast.success("Profile updated successfully ");
 
       setIsEditing(false);
       setFormData((prev) => ({ ...prev, password: "" }));
@@ -168,10 +166,7 @@ const Profile = () => {
             </motion.div>
           </motion.div>
 
-          <motion.div
-            className={styles.buttonRow}
-            variants={fadeUp}
-          >
+          <motion.div className={styles.buttonRow} variants={fadeUp}>
             {!isEditing ? (
               <motion.button
                 className={styles.editBtn}
@@ -195,7 +190,7 @@ const Profile = () => {
         </motion.div>
       </div>
 
-      {/* 🔔 CONFIRM SAVE POPUP */}
+      {/* SAVE POPUP */}
       <AnimatePresence>
         {confirmSave && (
           <motion.div
@@ -215,9 +210,7 @@ const Profile = () => {
               <p>Are you sure you want to save these changes?</p>
 
               <div className={styles.actions}>
-                <button onClick={() => setConfirmSave(false)}>
-                  Cancel
-                </button>
+                <button onClick={() => setConfirmSave(false)}>Cancel</button>
                 <button
                   className={styles.primaryBtn}
                   onClick={confirmSaveProfile}

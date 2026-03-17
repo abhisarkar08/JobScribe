@@ -1,15 +1,10 @@
-/* =========================
-   HOME WRAPPER
-========================= */
 .home {
   min-height: 100vh;
   width: 100%;
   overflow-x: hidden;
 }
 
-/* =========================
-   SECTION 1 (HERO)
-========================= */
+/*SECTION 1 */
 .section1 {
   min-height: 100vh;
   width: 100%;
@@ -20,17 +15,12 @@
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-
   padding-top: 8rem;
   gap: 0.6rem;
   text-align: center;
-
-  position: relative; /* IMPORTANT for overlapping image */
+  position: relative; 
 }
 
-/* =========================
-   HERO HEADINGS
-========================= */
 .section1 h2 {
   font-size: 4rem;
   font-weight: 700;
@@ -58,37 +48,26 @@
   border-radius: 1rem;
   cursor: pointer;
   transition: background-color 0.3s ease;
-}   
-/* =========================
-   HERO IMAGE (OVERLAP)
-========================= */
+}
+/*HERO IMAGE (OVERLAP) */
 .section1 img {
   width: 75rem;
   max-width: 90%;
-
   margin-top: 4rem;
-
   position: absolute;
-  bottom: -70vh; /* 🔥 half image goes into section2 */
-
+  bottom: -70vh; 
   filter: drop-shadow(0 40px 60px rgba(0, 0, 0, 0.15));
 }
 
-/* =========================
-   SECTION 2
-========================= */
+/*SECTION 2 */
 .section2 {
   min-height: 100vh;
   width: 100%;
-
-  padding-top: 40vh; /* space for bottom half of image */
-
+  padding-top: 40vh; 
   background-color: #ffffff;
 }
 
-/* =========================
-   RESPONSIVE (MOBILE)
-========================= */
+/*RESPONSIVE */
 @media (max-width: 768px) {
   .section1 {
     padding-top: 6rem;
@@ -112,9 +91,7 @@
   }
 }
 
-/* =========================
-   SECTION 3
-========================= */
+/*SECTION 3 */
 .section3 {
   padding: 6rem 2rem;
   text-align: center;
@@ -136,9 +113,7 @@
   line-height: 1.7;
 }
 
-/* =========================
-   FEATURES GRID
-========================= */
+/*FEATURES GRID */
 .featuresGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -147,9 +122,6 @@
   margin: 0 auto;
 }
 
-/* =========================
-   FEATURE CARD
-========================= */
 .featureCard {
   display: flex;
   flex-direction: column;
@@ -177,9 +149,7 @@
   max-width: 18rem;
 }
 
-/* =========================
-   RESPONSIVE
-========================= */
+/*RESPONSIVE */
 @media (max-width: 900px) {
   .featuresGrid {
     grid-template-columns: 1fr;
@@ -191,23 +161,17 @@
   }
 }
 
-/* =========================
-   SECTION 4 (WRAPPER)
-========================= */
+/*SECTION 4 */
 .section4 {
   position: relative;
   min-height: 100vh;
   background-color: #ffffff;
   overflow: hidden;
-
-  /* slant ke niche content push */
   padding: 10rem 1.5rem 6rem;
   text-align: center;
 }
 
-/* =========================
-   SLANTED BACKGROUND (TOP → BOTTOM)
-========================= */
+/* SLANTED BACKGROUND */
 .section4::before {
   content: "";
   position: absolute;
@@ -215,11 +179,9 @@
   left: -10%;
   width: 120%;
   height: 55%;
-
   background-color: #f4f7ff;
   transform: rotate(-4deg);
   transform-origin: center;
-
   z-index: 0;
 }
 
@@ -229,9 +191,7 @@
   z-index: 1;
 }
 
-/* =========================
-   FAQ TITLE & SUBTITLE
-========================= */
+/*FAQ*/
 .faqTitle {
   font-size: 2.8rem;
   font-weight: 700;
@@ -247,9 +207,6 @@
   line-height: 1.6;
 }
 
-/* =========================
-   FAQ LIST
-========================= */
 .faqList {
   max-width: 50rem;
   margin: 0 auto;
@@ -258,9 +215,6 @@
   gap: 1.2rem;
 }
 
-/* =========================
-   FAQ ITEM
-========================= */
 .faqItem {
   border: 1px solid #c7d2fe;
   border-radius: 0.75rem;
@@ -268,8 +222,9 @@
   cursor: pointer;
   text-align: left;
 
-  transition: background-color 0.25s ease,
-              border-color 0.25s ease;
+  transition:
+    background-color 0.25s ease,
+    border-color 0.25s ease;
 }
 
 .faqItem:hover {
@@ -281,9 +236,7 @@
   border-color: #2563eb;
 }
 
-/* =========================
-   QUESTION ROW
-========================= */
+/*QUESTION */
 .faqQuestion {
   display: flex;
   justify-content: space-between;
@@ -294,7 +247,6 @@
   color: #374151;
 }
 
-/* + / − icon */
 .icon {
   font-size: 1.6rem;
   color: #2563eb;
@@ -303,21 +255,16 @@
   transition: transform 0.3s ease;
 }
 
-/* rotate icon when open */
+/* rotate icon */
 .active .icon {
   transform: rotate(180deg);
 }
 
-/* =========================
-   ANSWER (SMOOTH ANIMATION)
-========================= */
 .faqAnswer {
   max-height: 0;
   overflow: hidden;
-
   opacity: 0;
   transform: translateY(-4px);
-
   margin-top: 0;
   line-height: 1.4;
 
@@ -328,28 +275,23 @@
     margin-top 0.3s ease;
 }
 
-
-/* when active */
 .active .faqAnswer {
-  max-height: 300px; /* safe height */
+  max-height: 300px;
   opacity: 1;
   transform: translateY(0);
   margin-top: 0.8rem;
 }
 
-
-/* =========================
-   RESPONSIVE
-========================= */
+/*RESPONSIVE */
 @media (max-width: 569px) {
-  .section1 img{
+  .section1 img {
     width: 100%;
     max-width: 75rem;
   }
   .section2 {
-    min-height: auto;      /* 🔥 content based height */
-    padding-top: 30vh;     /* image overlap ke liye */
-    padding-bottom: 4rem; /* thoda breathing space */
+    min-height: auto;
+    padding-top: 30vh; 
+    padding-bottom: 4rem; 
   }
   .section4 {
     padding: 8rem 1.25rem 5rem;
@@ -367,7 +309,6 @@
   .section1 img {
     width: 100%;
     max-width: 75rem;
-
-    transform: translateY(38%) !important; /* 👈 niche le jaata hai */
+    transform: translateY(38%) !important;
   }
 }

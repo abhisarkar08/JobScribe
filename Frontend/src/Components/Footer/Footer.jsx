@@ -1,10 +1,10 @@
-import React, { useContext } from "react"
-import styles from "./Footer.module.css"
-import { JobContext } from "../../Context/JobContext"
-import { Link } from "react-router-dom"
+import React, { useContext } from "react";
+import styles from "./Footer.module.css";
+import { JobContext } from "../../Context/JobContext";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
-  const { appName } = useContext(JobContext)
+  const { appName } = useContext(JobContext);
 
   return (
     <footer className={styles.footer}>
@@ -19,8 +19,8 @@ const Footer = () => {
           </div>
 
           <p className={styles.desc}>
-            Smart resume analysis & job matching platform to help you
-            crack interviews faster.
+            Smart resume analysis & job matching platform to help you crack
+            interviews faster.
           </p>
 
           <div className={styles.subscribeBox}>
@@ -57,7 +57,7 @@ const Footer = () => {
         © 2026 Created by Abhishek Sarkar. Built for job seekers.
       </p>
     </footer>
-  )
-}
+  );
+};
 
-export default Footer
+export default Footer;

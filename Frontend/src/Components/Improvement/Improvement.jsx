@@ -3,27 +3,20 @@ import { useNavigate, useLocation, useParams } from "react-router-dom";
 import styles from "./Improvement.module.css";
 import api from "../../Api/Axioscon";
 
-/* =====================================================
-   🔥 NORMALIZE SUGGESTIONS
-   - STRING
-   - OBJECT (skills_to_add, bullet_point_improvements, etc.)
-===================================================== */
 const normalizeSuggestions = (raw = []) => {
   const result = [];
 
   raw.forEach((item) => {
-    // ✅ string case
+    // string case
     if (typeof item === "string") {
       result.push(item);
       return;
     }
 
-    // ✅ object case (AI structured response)
+    //  AI structured response
     if (typeof item === "object" && item !== null) {
       if (Array.isArray(item.skills_to_add)) {
-        item.skills_to_add.forEach((s) =>
-          result.push(`Add skill: ${s}`)
-        );
+        item.skills_to_add.forEach((s) => result.push(`Add skill: ${s}`));
       }
 
       if (Array.isArray(item.bullet_point_improvements)) {
@@ -32,7 +25,7 @@ const normalizeSuggestions = (raw = []) => {
 
       if (Array.isArray(item.ats_keyword_improvements)) {
         item.ats_keyword_improvements.forEach((k) =>
-          result.push(`Include ATS keyword: ${k}`)
+          result.push(`Include ATS keyword: ${k}`),
         );
       }
 
@@ -40,11 +33,9 @@ const normalizeSuggestions = (raw = []) => {
         item.section_improvements &&
         typeof item.section_improvements === "object"
       ) {
-        Object.entries(item.section_improvements).forEach(
-          ([section, text]) => {
-            result.push(`${section.toUpperCase()}: ${text}`);
-          }
-        );
+        Object.entries(item.section_improvements).forEach(([section, text]) => {
+          result.push(`${section.toUpperCase()}: ${text}`);
+        });
       }
     }
   });
@@ -98,10 +89,7 @@ export default function Improvement() {
   return (
     <div className={styles.page}>
       <header className={styles.header}>
-        <button
-          className={styles.backButton}
-          onClick={() => navigate(-1)}
-        >
+        <button className={styles.backButton} onClick={() => navigate(-1)}>
           ← Back
         </button>
         <h1 className={styles.title}>Resume Improvement</h1>

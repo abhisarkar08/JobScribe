@@ -15,8 +15,6 @@ const Register = () => {
   });
 
   const [loading, setLoading] = useState(false);
-
-  /* 👇 form specific error (inputs ke niche) */
   const [formError, setFormError] = useState("");
 
   const handleChange = (e) => {
@@ -32,7 +30,7 @@ const Register = () => {
     e.preventDefault();
     setFormError("");
 
-    /* 🔹 CLIENT SIDE VALIDATION */
+    /* USER SIDE VALIDATION */
     if (!formData.firstName || !formData.email || !formData.password) {
       const msg = "Please fill all required fields";
       setFormError(msg);
@@ -51,16 +49,13 @@ const Register = () => {
         password: formData.password,
       });
 
-      toast.success("Account created successfully 🎉");
+      toast.success("Account created successfully");
 
       setTimeout(() => {
-        navigate("/user"); // ya /login
+        navigate("/user"); 
       }, 800);
     } catch (err) {
-      const msg =
-        err?.response?.data?.message || "Registration failed";
-
-      /* 👇 form error + toast both */
+      const msg = err?.response?.data?.message || "Registration failed";
       setFormError(msg);
       toast.error(msg);
     } finally {
@@ -86,7 +81,7 @@ const Register = () => {
           <h2>Create Account</h2>
 
           <form onSubmit={handleSubmit}>
-            {/* GOOGLE SIGNUP (NO TOAST HERE) */}
+            {/* GOOGLE SIGNUP */}
             <button
               type="button"
               className={styles.googleBtn}
@@ -134,10 +129,8 @@ const Register = () => {
               onChange={handleChange}
             />
 
-            {/* 🔴 FORM ERROR */}
-            {formError && (
-              <p className={styles.error}>{formError}</p>
-            )}
+            {/* FORM ERROR */}
+            {formError && <p className={styles.error}>{formError}</p>}
 
             <button
               type="submit"
@@ -150,9 +143,7 @@ const Register = () => {
 
           <p className={styles.loginText}>
             Already have an account?{" "}
-            <span onClick={() => navigate("/login")}>
-              Log in
-            </span>
+            <span onClick={() => navigate("/login")}>Log in</span>
           </p>
         </div>
       </div>

@@ -1,39 +1,35 @@
-// src/Components/Loader/PageWrapper.jsx
-import { useEffect, useState } from "react"
-import { useLocation } from "react-router-dom"
-import Skeleton from "./Skeleton"
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+import Skeleton from "./Skeleton";
 
-const NO_SKELETON = ["/login", "/register"]
+const NO_SKELETON = ["/login", "/register"];
 
 const PageWrapper = ({ children }) => {
-  const location = useLocation()
-  const [loading, setLoading] = useState(true)
+  const location = useLocation();
+  const [loading, setLoading] = useState(true);
 
   const shouldSkip =
-    NO_SKELETON.includes(location.pathname) ||
-    location.pathname === "*"
+    NO_SKELETON.includes(location.pathname) || location.pathname === "*";
 
   useEffect(() => {
     if (shouldSkip) {
-      setLoading(false)
-      return
+      setLoading(false);
+      return;
     }
 
-    setLoading(true)
-
-    // 🔥 very small guaranteed delay (UX polish)
+    setLoading(true);
     const timer = setTimeout(() => {
-      setLoading(false)
-    }, 80)
+      setLoading(false);
+    }, 80);
 
-    return () => clearTimeout(timer)
-  }, [location.pathname])
+    return () => clearTimeout(timer);
+  }, [location.pathname]);
 
   if (loading) {
-    return <Skeleton />
+    return <Skeleton />;
   }
 
-  return children
-}
+  return children;
+};
 
-export default PageWrapper
+export default PageWrapper;

@@ -12,7 +12,7 @@ export default function Interview() {
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [isFallback, setIsFallback] = useState(false); // 🔥 NEW
+  const [isFallback, setIsFallback] = useState(false);
 
   useEffect(() => {
     if (!jdText) {
@@ -28,15 +28,10 @@ export default function Interview() {
         });
 
         setQuestions(
-          Array.isArray(res.data.questions)
-            ? res.data.questions
-            : []
+          Array.isArray(res.data.questions) ? res.data.questions : [],
         );
-
-        // 🔥 fallback detect
         setIsFallback(res.data.source === "fallback");
       } catch (err) {
-        // ❌ ab 429 pe error nahi dikhana
         setError("Failed to generate interview questions");
       } finally {
         setLoading(false);
@@ -49,10 +44,7 @@ export default function Interview() {
   return (
     <div className={styles.page}>
       <header className={styles.header}>
-        <button
-          className={styles.backButton}
-          onClick={() => navigate(-1)}
-        >
+        <button className={styles.backButton} onClick={() => navigate(-1)}>
           ← Back
         </button>
         <h1 className={styles.title}>Interview Questions</h1>
@@ -61,7 +53,7 @@ export default function Interview() {
       <main className={styles.container}>
         {loading && <p>Generating questions...</p>}
 
-        {/* 🔥 fallback info */}
+        {/* fallback info */}
         {!loading && isFallback && (
           <p className={styles.fallbackNote}>
             High demand right now — showing basic interview questions.

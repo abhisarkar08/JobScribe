@@ -81,7 +81,7 @@
   cursor: pointer;
 }
 
-/* 🔔 Confirm Save Popup */
+/* Save Popup */
 .overlay {
   position: fixed;
   inset: 0;

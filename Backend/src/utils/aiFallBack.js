@@ -1,5 +1,3 @@
-// src/utils/aiFallback.js
-
 exports.basicInterviewQuestions = [
   "Tell me about yourself",
   "Explain your most recent project",

@@ -15,7 +15,7 @@
   border-bottom: 0.08rem solid rgba(0, 0, 0, 0.05);
 }
 
-/* ---------- LEFT ---------- */
+/* LEFT */
 
 .navRight {
   display: flex;
@@ -49,7 +49,7 @@
   cursor: pointer;
 }
 
-/* ---------- HOME LINKS ---------- */
+/* HOME LINKS */
 
 .rest {
   display: flex;
@@ -71,7 +71,7 @@
 }
 
 .rest a::after {
-  content: '';
+  content: "";
   position: absolute;
   left: 0;
   bottom: -0.3rem;
@@ -85,7 +85,7 @@
   width: 100%;
 }
 
-/* ---------- CTA ---------- */
+/* CTA */
 
 .getStarted {
   padding: 0.65em 1.6em;
@@ -102,7 +102,7 @@
   box-shadow: 0 0.6rem 1.5rem rgba(99, 102, 241, 0.35);
 }
 
-/* ---------- PROFILE ---------- */
+/* PROFILE */
 
 .profileWrapper {
   position: relative;
@@ -118,10 +118,12 @@
   align-items: center;
   justify-content: center;
 
-  background: #2563EB;
+  background: #2563eb;
   color: #ffffff;
 
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .avatar:hover {
@@ -129,7 +131,7 @@
   box-shadow: 0 0.6rem 1.2rem rgba(99, 102, 241, 0.35);
 }
 
-/* ---------- DROPDOWN ---------- */
+/* DROPDOWN */
 
 .dropdown {
   position: absolute;
@@ -169,7 +171,7 @@
   color: #dc2626;
 }
 
-/* ---------- ANIMATION ---------- */
+/* ANIMATION */
 
 @keyframes fadeIn {
   from {
@@ -181,7 +183,7 @@
     transform: translateY(0);
   }
 }
-/* 🔥 Overlay */
+/* Overlay */
 .overlay {
   position: fixed;
   inset: 0;
@@ -192,7 +194,7 @@
   z-index: 999;
 }
 
-/* 🔔 Confirm Box */
+/*Confirm Box */
 .confirmBox {
   background: #fff;
   padding: 1.5rem;
@@ -241,7 +243,7 @@
     opacity: 1;
   }
 }
-/* ---------- RESPONSIVE ---------- */
+/* RESPONSIVE */
 
 @media (max-width: 48rem) {
   .rest {

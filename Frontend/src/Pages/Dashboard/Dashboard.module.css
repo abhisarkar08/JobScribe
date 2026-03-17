@@ -1,6 +1,3 @@
-/* =========================
-   ROOT TOKENS
-========================= */
 :root {
   --bg-main: #f4f6fb;
   --card-bg: #ffffff;
@@ -17,9 +14,6 @@
   --shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
 }
 
-/* =========================
-   PAGE
-========================= */
 .page {
   min-height: 100vh;
   padding: 2rem 2rem;
@@ -27,9 +21,7 @@
   background: var(--bg-main);
 }
 
-/* =========================
-   STATS GRID
-========================= */
+/*STATS GRID*/
 .stats {
   max-width: 1200px;
   margin: 0 auto 2rem;
@@ -38,7 +30,7 @@
   gap: 1.5rem;
 }
 
-/* 🔥 IMPORTANT: prevents mobile overflow */
+/*prevents mobile overflow */
 .stats > * {
   min-width: 0;
 }
@@ -76,9 +68,7 @@
   margin: 0.2rem 0 0;
 }
 
-/* =========================
-   MAIN GRID
-========================= */
+/* MAIN GRID */
 .grid {
   max-width: 1200px;
   margin: auto;
@@ -87,10 +77,6 @@
   gap: 1.6rem;
   align-items: start;
 }
-
-/* =========================
-   CARD
-========================= */
 .card {
   background: var(--card-bg);
   border-radius: 14px;
@@ -106,9 +92,7 @@
   margin-bottom: 1rem;
 }
 
-/* =========================
-   CHART
-========================= */
+/*CHART */
 .chartCard {
   min-height: 340px;
 }
@@ -118,9 +102,7 @@
   min-height: 260px;
 }
 
-/* =========================
-   WEAKEST SKILLS
-========================= */
+/*WEAK SKILL */
 .skillRow {
   margin-bottom: 1rem;
 }
@@ -143,12 +125,10 @@
   border-radius: 999px;
 }
 
-/* =========================
-   INTERVIEW READINESS
-========================= */
+/*INTERVIEW */
 .radialWrap {
   position: relative;
-  height: 160px;        /* 🔥 REQUIRED FOR RECHARTS */
+  height: 160px; 
   min-height: 160px;
 }
 
@@ -194,9 +174,7 @@
   text-align: center;
 }
 
-/* =========================
-   RESUMES
-========================= */
+/*RESUMES */
 .resumeGrid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -260,9 +238,7 @@
 .deleteBtn:active {
   transform: scale(0.95);
 }
-/* =========================
-   HEATMAP
-========================= */
+/*HEATMAP */
 .heatmap {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
@@ -272,12 +248,11 @@
 .heatCell {
   display: flex;
   align-items: center;
-  justify-content: space-between; /* 🔥 yahin se gap aayega */
+  justify-content: space-between;
   padding: 0.75rem;
   border-radius: 12px;
   color: white;
 }
-
 
 .heatCell span {
   font-size: 0.85rem;
@@ -288,9 +263,7 @@
   font-size: 0.85rem;
 }
 
-/* =========================
-   RECENT MATCHES
-========================= */
+/*RECENT MATCHES */
 .matches {
   list-style: none;
   padding: 0;
@@ -308,9 +281,8 @@
   border-bottom: none;
 }
 
-/* 🔥 LIMIT RESUME LIST HEIGHT + SCROLL */
 .resumeGrid {
-  max-height: 18rem;            /* ~4 cards */
+  max-height: 18rem; 
   overflow-y: auto;
   padding-right: 0.3rem;
 }
@@ -323,7 +295,7 @@
   background: #c7d2fe;
   border-radius: 999px;
 }
-/* 🔔 Delete Confirm Popup */
+/*Delete Popup */
 .overlay {
   position: fixed;
   inset: 0;
@@ -380,9 +352,7 @@
     opacity: 1;
   }
 }
-/* =========================
-   RESPONSIVE FIXES
-========================= */
+/*RESPONSIVE */
 @media (max-width: 48em) {
   .page {
     padding-left: 1rem;
@@ -402,8 +372,6 @@
     grid-template-columns: 1fr;
   }
 }
-
-/* very small phones (320px) */
 @media (max-width: 22em) {
   .stats {
     grid-template-columns: 1fr;

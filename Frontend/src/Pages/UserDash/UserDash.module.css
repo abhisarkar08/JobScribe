@@ -9,15 +9,11 @@
   justify-content: center;
   align-items: flex-start;
 }
-
-/* wrapper so content stays centered */
 .wrapper {
   width: 100%;
   max-width: 75rem;
   padding: 4rem 1.5rem;
 }
-
-/* ---------- HERO ---------- */
 .hero {
   text-align: center;
   color: #fff;
@@ -47,13 +43,11 @@
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
 }
 
-/* ---------- CARDS ---------- */
 .cards {
   display: grid;
   gap: 1.5rem;
 }
 
-/* card base */
 .card {
   background: rgba(255, 255, 255, 0.95);
   padding: 2rem;
@@ -84,7 +78,6 @@
   font-size: 1rem;
 }
 
-/* middle highlighted card */
 .highlight {
   background: linear-gradient(180deg, #fff7ed, #ffedd5);
 }
@@ -100,7 +93,9 @@
 }
 
 .card {
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
 .card:hover {
@@ -111,8 +106,6 @@
   transform: translateY(-0.8rem);
 }
 
-
-/* ---------- RESPONSIVE ---------- */
 @media (min-width: 48em) {
   .hero h1 {
     font-size: 2.6rem;

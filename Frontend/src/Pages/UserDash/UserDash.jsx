@@ -1,22 +1,19 @@
-import React from "react";
 import styles from "./UserDash.module.css";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
-/* ---------------- Animations ---------------- */
-
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0 }
+  visible: { opacity: 1, y: 0 },
 };
 
 const containerStagger = {
   hidden: {},
   visible: {
     transition: {
-      staggerChildren: 0.2
-    }
-  }
+      staggerChildren: 0.2,
+    },
+  },
 };
 
 const floatImg = {
@@ -25,9 +22,9 @@ const floatImg = {
     transition: {
       duration: 4,
       repeat: Infinity,
-      ease: "easeInOut"
-    }
-  }
+      ease: "easeInOut",
+    },
+  },
 };
 
 const UserDash = () => {
@@ -36,7 +33,6 @@ const UserDash = () => {
   return (
     <div className={styles.userDash}>
       <div className={styles.wrapper}>
-
         {/* HERO TEXT */}
         <section className={styles.hero}>
           <motion.h1
@@ -92,12 +88,10 @@ const UserDash = () => {
             />
             <h3>Resume Analyzer</h3>
             <p>Get instant feedback on your resume.</p>
-            <button onClick={() => navig("/resume")}>
-              Get Started →
-            </button>
+            <button onClick={() => navig("/resume")}>Get Started →</button>
           </motion.div>
 
-          {/* JD Card (highlight) */}
+          {/* JD Card*/}
           <motion.div
             className={`${styles.card} ${styles.highlight}`}
             variants={fadeUp}
@@ -113,9 +107,7 @@ const UserDash = () => {
             />
             <h3>Job Description Matcher</h3>
             <p>Match your resume to job listings.</p>
-            <button onClick={() => navig("/JD")}>
-              Try Now →
-            </button>
+            <button onClick={() => navig("/JD")}>Try Now →</button>
           </motion.div>
 
           {/* Dashboard Card */}

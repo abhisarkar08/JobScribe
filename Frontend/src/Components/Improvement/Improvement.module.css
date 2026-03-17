@@ -1,10 +1,26 @@
 .page {
   min-height: 100vh;
-  background: radial-gradient(600px 300px at 10% 20%, rgba(99,102,241,0.06), transparent 8%),
-              radial-gradient(500px 260px at 90% 80%, rgba(34,197,94,0.04), transparent 10%),
-              linear-gradient(180deg, #fbfdff 0%, #f6f9fc 50%, #eef6fb 100%);
+  background:
+    radial-gradient(
+      600px 300px at 10% 20%,
+      rgba(99, 102, 241, 0.06),
+      transparent 8%
+    ),
+    radial-gradient(
+      500px 260px at 90% 80%,
+      rgba(34, 197, 94, 0.04),
+      transparent 10%
+    ),
+    linear-gradient(180deg, #fbfdff 0%, #f6f9fc 50%, #eef6fb 100%);
   color: #0b1220;
-  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  font-family:
+    Inter,
+    system-ui,
+    -apple-system,
+    "Segoe UI",
+    Roboto,
+    "Helvetica Neue",
+    Arial;
   padding: 28px;
   box-sizing: border-box;
 }
@@ -22,19 +38,21 @@
   align-items: center;
   gap: 8px;
   background: #ffffff;
-  border: 1px solid rgba(11,18,32,0.06);
+  border: 1px solid rgba(11, 18, 32, 0.06);
   color: #0b1220;
   padding: 8px 12px;
   border-radius: 10px;
   cursor: pointer;
   font-weight: 600;
-  box-shadow: 0 6px 18px rgba(11,18,32,0.06);
-  transition: transform 140ms ease, box-shadow 140ms ease;
+  box-shadow: 0 6px 18px rgba(11, 18, 32, 0.06);
+  transition:
+    transform 140ms ease,
+    box-shadow 140ms ease;
 }
 
 .backButton:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 26px rgba(11,18,32,0.08);
+  box-shadow: 0 10px 26px rgba(11, 18, 32, 0.08);
 }
 
 .title {
@@ -51,7 +69,7 @@
   width: 100%;
 }
 
-/* two-column responsive layout */
+/* two-column layout */
 .columns {
   display: grid;
   grid-template-columns: 1fr;
@@ -60,10 +78,10 @@
 
 .panel {
   background: linear-gradient(180deg, #ffffff, #fbfdff);
-  border: 1px solid rgba(11,18,32,0.04);
+  border: 1px solid rgba(11, 18, 32, 0.04);
   padding: 18px;
   border-radius: 14px;
-  box-shadow: 0 10px 30px rgba(16,24,40,0.04);
+  box-shadow: 0 10px 30px rgba(16, 24, 40, 0.04);
 }
 
 .panelTitle {
@@ -87,15 +105,19 @@
   padding: 12px;
   border-radius: 12px;
   background: linear-gradient(180deg, #ffffff, #fcfeff);
-  border: 1px solid rgba(11,18,32,0.035);
-  box-shadow: 0 6px 18px rgba(11,18,32,0.035);
+  border: 1px solid rgba(11, 18, 32, 0.035);
+  box-shadow: 0 6px 18px rgba(11, 18, 32, 0.035);
 }
 
 .dot {
   min-width: 36px;
   height: 36px;
   border-radius: 8px;
-  background: linear-gradient(180deg, rgba(99,102,241,0.12), rgba(99,102,241,0.06));
+  background: linear-gradient(
+    180deg,
+    rgba(99, 102, 241, 0.12),
+    rgba(99, 102, 241, 0.06)
+  );
   color: #4257ff;
   display: flex;
   align-items: center;
@@ -107,13 +129,17 @@
   min-width: 46px;
   height: 36px;
   border-radius: 8px;
-  background: linear-gradient(180deg, rgba(34,197,94,0.12), rgba(34,197,94,0.06));
+  background: linear-gradient(
+    180deg,
+    rgba(34, 197, 94, 0.12),
+    rgba(34, 197, 94, 0.06)
+  );
   color: #0b7a3a;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  border: 1px solid rgba(11,18,32,0.03);
+  border: 1px solid rgba(11, 18, 32, 0.03);
   padding: 0 8px;
 }
 
@@ -131,7 +157,7 @@
   background: rgba(255, 193, 7, 0.15);
   color: #8a6d1d;
 }
-/* responsive columns for larger screens */
+/* responsive */
 @media (min-width: 880px) {
   .columns {
     grid-template-columns: 1fr 1fr;
@@ -141,7 +167,6 @@
   }
 }
 
-/* fine adjustments for very wide screens */
 @media (min-width: 1200px) {
   .panel {
     padding: 22px;
@@ -155,7 +180,8 @@
 
 /* reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  .backButton, .card {
+  .backButton,
+  .card {
     transition: none;
   }
 }

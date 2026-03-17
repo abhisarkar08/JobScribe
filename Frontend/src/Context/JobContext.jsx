@@ -13,7 +13,7 @@ const JobContextProvider = ({ children }) => {
     missingSkills: [],
   });
 
-  /* 🔥 RESUME DATA (NEW & REQUIRED) */
+  /* RESUME DATA  */
   const [resumeData, setResumeData] = useState({
     file: null,
     resumeId: null,
@@ -31,11 +31,7 @@ const JobContextProvider = ({ children }) => {
     setResumeData,
   };
 
-  return (
-    <JobContext.Provider value={value}>
-      {children}
-    </JobContext.Provider>
-  );
+  return <JobContext.Provider value={value}>{children}</JobContext.Provider>;
 };
 
 export default JobContextProvider;

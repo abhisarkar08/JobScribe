@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { motion, AnimatePresence } from "framer-motion";
 
-/* ---------------- Animations ---------------- */
+/* Animations */
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -40,7 +40,6 @@ const JD = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  /* sync context → state */
   useEffect(() => {
     if (jdData.matchedSkills) {
       setMatched(jdData.matchedSkills);
@@ -55,7 +54,7 @@ const JD = () => {
     }
   }, [jdData.resumeId, resumes]);
 
-  /* 🔹 FETCH USER RESUMES */
+  /* FETCH RESUMES */
   useEffect(() => {
     const fetchResumes = async () => {
       try {
@@ -70,7 +69,7 @@ const JD = () => {
     fetchResumes();
   }, []);
 
-  /* 🔹 MATCH JD */
+  /* MATCH JD */
   const handleMatch = async () => {
     if (!jdText.trim() || !selectedResume) {
       toast.warning("Please select a resume first");
@@ -100,13 +99,13 @@ const JD = () => {
       });
 
       matchedSkills.length >= missingSkills.length
-        ? toast.success("JD matched successfully 🎯")
-        : toast.info("JD matched, but many skills are missing ⚠️");
+        ? toast.success("JD matched successfully ")
+        : toast.info("JD matched, but many skills are missing ");
 
       setShowModal(false);
     } catch (err) {
       err.response?.status === 429
-        ? toast.error("AI limit reached. Please try again later ⏳")
+        ? toast.error("AI limit reached. Please try again later")
         : toast.error("JD matching failed");
     } finally {
       setLoading(false);
@@ -257,7 +256,7 @@ const JD = () => {
         </div>
       </motion.div>
 
-      {/* 🔥 MODAL */}
+      {/* MODAL */}
       <AnimatePresence>
         {showModal && (
           <motion.div

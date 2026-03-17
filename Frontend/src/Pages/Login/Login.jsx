@@ -13,8 +13,6 @@ const Login = () => {
   });
 
   const [loading, setLoading] = useState(false);
-
-  /* 👇 form specific error (inputs ke niche) */
   const [formError, setFormError] = useState("");
 
   const handleChange = (e) => {
@@ -23,14 +21,14 @@ const Login = () => {
       ...prev,
       [name]: value,
     }));
-    setFormError(""); // typing start → error clear
+    setFormError("");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFormError("");
 
-    /* 🔹 CLIENT SIDE VALIDATION */
+    /* USER SIDE VALIDATION */
     if (!formData.email || !formData.password) {
       const msg = "Please enter email and password";
       setFormError(msg);
@@ -43,17 +41,13 @@ const Login = () => {
     try {
       await api.post("/auth/login", formData);
 
-      toast.success("Login successful 🎉");
+      toast.success("Login successful ");
 
       setTimeout(() => {
         navigate("/user");
       }, 700);
     } catch (err) {
-      const msg =
-        err?.response?.data?.message ||
-        "Invalid email or password";
-
-      /* 👇 form error + toast both */
+      const msg = err?.response?.data?.message || "Invalid email or password";
       setFormError(msg);
       toast.error(msg);
     } finally {
@@ -108,10 +102,8 @@ const Login = () => {
               onChange={handleChange}
             />
 
-            {/* 🔴 FORM ERROR (below inputs) */}
-            {formError && (
-              <p className={styles.error}>{formError}</p>
-            )}
+            {/*FORM ERROR */}
+            {formError && <p className={styles.error}>{formError}</p>}
 
             <button
               type="submit"
@@ -124,9 +116,7 @@ const Login = () => {
 
           <p className={styles.loginText}>
             Don't have an account?{" "}
-            <span onClick={() => navigate("/register")}>
-              Sign up
-            </span>
+            <span onClick={() => navigate("/register")}>Sign up</span>
           </p>
         </div>
       </div>

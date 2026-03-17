@@ -57,7 +57,7 @@ async function login(req, res) {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: false, // Set to true in production
+      secure: false,
       sameSite: "lax",
     });
     res.json({ message: "Login successful" });
@@ -83,7 +83,6 @@ function deletea(req, res) {
     });
 }
 
-/* 🔹 GET LOGGED-IN USER */
 async function me(req, res) {
   try {
     const currentUser = await user.findById(req.user._id).select("-password");
@@ -94,7 +93,7 @@ async function me(req, res) {
   }
 }
 
-/* 🔹 UPDATE PROFILE */
+/* UPDATE PROFILE */
 async function updateProfile(req, res) {
   try {
     const { fullName, email, password } = req.body;
@@ -107,8 +106,6 @@ async function updateProfile(req, res) {
     if (password && password.trim().length >= 6) {
       const bcrypt = require("bcrypt");
       updateData.password = await bcrypt.hash(password, 10);
-
-      // 🔥 IMPORTANT: convert google user to local login
       updateData.provider = "local";
     }
 

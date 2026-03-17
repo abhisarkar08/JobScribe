@@ -1,53 +1,54 @@
-import React, { useState, useContext } from 'react'
-import styles from './Home.module.css'
-import { JobContext } from '../../Context/JobContext'
-import { motion } from 'framer-motion'
+import React, { useState, useContext } from "react";
+import styles from "./Home.module.css";
+import { JobContext } from "../../Context/JobContext";
+import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 const faqs = [
   {
     question: "What is JobScribe?",
     answer:
-      "JobScribe is a smart resume analysis and job-matching platform that helps you compare your resume with job descriptions and identify skill gaps before applying."
+      "JobScribe is a smart resume analysis and job-matching platform that helps you compare your resume with job descriptions and identify skill gaps before applying.",
   },
   {
     question: "How does resume analysis work?",
     answer:
-      "You upload your resume, select or paste a job description, and JobScribe analyzes skills, keywords, and experience to generate a match score and insights."
+      "You upload your resume, select or paste a job description, and JobScribe analyzes skills, keywords, and experience to generate a match score and insights.",
   },
   {
     question: "Is JobScribe free to use?",
     answer:
-      "Yes, JobScribe offers a free version with basic resume analysis. Advanced features like detailed skill insights may be part of premium plans."
+      "Yes, JobScribe offers a free version with basic resume analysis. Advanced features like detailed skill insights may be part of premium plans.",
   },
   {
     question: "Which roles is JobScribe best for?",
     answer:
-      "JobScribe works best for students, freshers, and early professionals applying for roles like Software Developer, Frontend, Backend, Data Analyst, and more."
+      "JobScribe works best for students, freshers, and early professionals applying for roles like Software Developer, Frontend, Backend, Data Analyst, and more.",
   },
   {
     question: "Will JobScribe help me get interview-ready?",
     answer:
-      "Yes. JobScribe highlights missing skills, weak areas, and improvements needed so you can focus on the right preparation before interviews."
-  }
-]
+      "Yes. JobScribe highlights missing skills, weak areas, and improvements needed so you can focus on the right preparation before interviews.",
+  },
+];
 
 // reusable animation
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0 }
-}
+  visible: { opacity: 1, y: 0 },
+};
 
 const Home = () => {
-  const { appName } = useContext(JobContext)
-  const [openIndex, setOpenIndex] = useState(null)
+  const navigate = useNavigate();
+  const { appName } = useContext(JobContext);
+  const [openIndex, setOpenIndex] = useState(null);
 
   const toggleFAQ = (index) => {
-    setOpenIndex(openIndex === index ? null : index)
-  }
+    setOpenIndex(openIndex === index ? null : index);
+  };
 
   return (
     <div className={styles.home}>
-
       {/* HERO SECTION */}
       <div className={styles.section1}>
         <motion.h2
@@ -91,6 +92,7 @@ const Home = () => {
           whileHover={{ scale: 1.08 }}
           whileTap={{ scale: 0.95 }}
           transition={{ type: "spring", stiffness: 300 }}
+          onClick={() => navigate("/login")} 
         >
           Get Started
         </motion.button>
@@ -125,7 +127,8 @@ const Home = () => {
           transition={{ delay: 0.2 }}
         >
           {appName} helps you analyze resumes, match them with job descriptions,
-          and clearly understand what skills you need to improve before applying.
+          and clearly understand what skills you need to improve before
+          applying.
         </motion.p>
 
         <motion.div
@@ -134,28 +137,25 @@ const Home = () => {
           whileInView="visible"
           viewport={{ once: true }}
           variants={{
-            visible: { transition: { staggerChildren: 0.2 } }
+            visible: { transition: { staggerChildren: 0.2 } },
           }}
         >
           {[
             {
               img: "/Resume-rafiki.svg",
               title: "Resume Analysis",
-              text:
-                "Upload your resume and get a detailed breakdown of skills, experience, and keyword relevance."
+              text: "Upload your resume and get a detailed breakdown of skills, experience, and keyword relevance.",
             },
             {
               img: "/Job hunt-cuate.svg",
               title: "Job Match Score",
-              text:
-                "Compare your resume with job descriptions and receive a clear match score."
+              text: "Compare your resume with job descriptions and receive a clear match score.",
             },
             {
               img: "/Design.svg",
               title: "Skill Gap Insights",
-              text:
-                "Identify missing skills, track weaknesses, and know exactly what to learn next."
-            }
+              text: "Identify missing skills, track weaknesses, and know exactly what to learn next.",
+            },
           ].map((item, i) => (
             <motion.div
               key={i}
@@ -171,7 +171,7 @@ const Home = () => {
         </motion.div>
       </div>
 
-      {/* FAQ SECTION (FIXED) */}
+      {/* FAQ SECTION */}
       <div className={styles.section4} id="section4">
         <motion.h2
           className={styles.faqTitle}
@@ -189,14 +189,12 @@ const Home = () => {
 
         <div className={styles.faqList}>
           {faqs.map((faq, index) => {
-            const isOpen = openIndex === index
+            const isOpen = openIndex === index;
 
             return (
               <motion.div
                 key={index}
-                className={`${styles.faqItem} ${
-                  isOpen ? styles.active : ""
-                }`}
+                className={`${styles.faqItem} ${isOpen ? styles.active : ""}`}
                 onClick={() => toggleFAQ(index)}
                 layout
               >
@@ -222,12 +220,12 @@ const Home = () => {
                   </motion.p>
                 )}
               </motion.div>
-            )
+            );
           })}
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;

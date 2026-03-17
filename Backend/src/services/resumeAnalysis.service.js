@@ -1,7 +1,3 @@
-// ===============================
-// RESUME ANALYZER - PHASE 1 (STABLE)
-// ===============================
-
 function extractSkillSection(text) {
   const lines = text.split("\n").map((l) => l.trim());
 
@@ -9,13 +5,10 @@ function extractSkillSection(text) {
   let skillsBlock = [];
 
   for (let line of lines) {
-    // Start capturing: Skills heading dhundna (e.g., "Skills", "Technical Skills", "Key Skills")
     if (/^(technical\s+)?skills$|^key\s+skills$/i.test(line)) {
       capturing = true;
       continue;
     }
-
-    // Stop capturing: Jab koi doosri major heading aaye (e.g., "Education", "Experience")
     if (
       capturing &&
       /education|experience|projects|achievements|certifications|summary/i.test(
@@ -35,14 +28,12 @@ function extractSkillSection(text) {
   let skills = [];
 
   skillsBlock.forEach((line) => {
-    // Case 1: Colon format (e.g., "Languages: Java, Python")
     if (line.includes(":")) {
       const rightSide = line.split(":")[1];
       if (rightSide) {
         skills.push(...rightSide.split(",").map((s) => s.trim()));
       }
     }
-    // Case 2: Bullet or Comma format
     else {
       const cleaned = line.replace(/^[•\-\*]\s*/, ""); // Bullets hatana
       skills.push(...cleaned.split(",").map((s) => s.trim()));
@@ -74,7 +65,6 @@ function extractPhone(text) {
   return match ? match[0].trim() : null;
 }
 
-// 🔥 IMPROVED: Ab ye "Work Experience" ya "Academic Education" ko bhi pakad lega
 function hasSection(text, sectionName) {
   const patterns = {
     education: /education|academic|qualification|schooling/i,
@@ -89,17 +79,14 @@ function hasSection(text, sectionName) {
 function calculateScore({ skills, email, phone, text }) {
   let score = 0;
 
-  // Skills weight (Max 25)
   if (skills.length >= 8) score += 25;
   else if (skills.length >= 4) score += 15;
   else if (skills.length > 0) score += 10;
 
-  // Section presence (Max 75)
   if (hasSection(text, "education")) score += 25;
   if (hasSection(text, "project")) score += 25;
   if (hasSection(text, "experience")) score += 25;
 
-  // Contact info (Max 10)
   if (email && phone) score += 10;
 
   return Math.min(score, 100);

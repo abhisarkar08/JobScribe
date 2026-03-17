@@ -1,4 +1,4 @@
-import styles from './Skeleton.module.css'
+import styles from "./Skeleton.module.css";
 
 const Skeleton = () => {
   return (
@@ -13,7 +13,7 @@ const Skeleton = () => {
 
       <div className={`${styles.large} skeleton`} />
     </div>
-  )
-}
+  );
+};
 
-export default Skeleton
+export default Skeleton;

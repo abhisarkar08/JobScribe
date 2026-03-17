@@ -5,8 +5,6 @@ import api from "../../Api/Axioscon";
 import { toast } from "react-toastify";
 import { motion } from "framer-motion";
 
-/* ---------------- Animations ---------------- */
-
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
   visible: { opacity: 1, y: 0 },
@@ -19,29 +17,23 @@ const stagger = {
   },
 };
 
-/* =====================================================
-   🔥 SKILLS NORMALIZER (MAIN FIX)
-===================================================== */
 const normalizeSkills = (skills = []) => {
   return skills
     .map((s) => {
       if (typeof s === "string") return s;
-      if (typeof s === "object" && s !== null)
-        return s.name || s.skill || "";
+      if (typeof s === "object" && s !== null) return s.name || s.skill || "";
       return "";
     })
     .filter(Boolean);
 };
 
 const Resume = () => {
-  /* 🔥 CONTEXT */
   const { resumeData, setResumeData } = useContext(JobContext);
-
   const [file, setFile] = useState(resumeData?.file || null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  /* ---------- ATS SCORE ---------- */
+  /* ATS SCORE */
   const score = resumeData?.atsScore ?? 0;
   const safeScore = Math.max(0, Math.min(score, 100));
 
@@ -52,7 +44,7 @@ const Resume = () => {
 
   const progressDeg = `${safeScore * 3.6}deg`;
 
-  /* ---------- FILE HANDLERS ---------- */
+  /* FILE HANDLERS */
   const handleFileChange = (e) => {
     const selected = e.target.files[0];
     if (!selected) return;
@@ -70,9 +62,7 @@ const Resume = () => {
     });
   };
 
-  /* =====================================================
-     🔥 UPLOAD RESUME
-  ===================================================== */
+  /*UPLOAD RESUME */
   const handleGenerate = async () => {
     if (!file) {
       const msg = "Please upload a resume first";
@@ -83,15 +73,12 @@ const Resume = () => {
 
     setLoading(true);
     setError("");
-
-    // 🔥 RESET BEFORE ANALYSIS
-  setResumeData({
-    file,
-    resumeId: null,
-    atsScore: 0,
-    skills: [],
-  });
-
+    setResumeData({
+      file,
+      resumeId: null,
+      atsScore: 0,
+      skills: [],
+    });
 
     try {
       const formData = new FormData();
@@ -109,19 +96,15 @@ const Resume = () => {
         file,
         resumeId,
         atsScore:
-          safeAnalysis.score !== undefined
-            ? safeAnalysis.score
-            : prev.atsScore,
-        skills:
-          safeAnalysis.skills?.length
-            ? normalizeSkills(safeAnalysis.skills)
-            : prev.skills,
+          safeAnalysis.score !== undefined ? safeAnalysis.score : prev.atsScore,
+        skills: safeAnalysis.skills?.length
+          ? normalizeSkills(safeAnalysis.skills)
+          : prev.skills,
       }));
 
-      toast.success("Resume uploaded successfully 🚀");
+      toast.success("Resume uploaded successfully");
     } catch (err) {
-      const msg =
-        err?.response?.data?.message || "Resume upload failed";
+      const msg = err?.response?.data?.message || "Resume upload failed";
       setError(msg);
       toast.error(msg);
     } finally {
@@ -129,9 +112,6 @@ const Resume = () => {
     }
   };
 
-  /* =====================================================
-     🔥 UI
-  ===================================================== */
   return (
     <div className={styles.page}>
       <motion.div
@@ -140,7 +120,7 @@ const Resume = () => {
         initial="hidden"
         animate="visible"
       >
-        {/* ---------- LEFT ---------- */}
+        {/* LEFT */}
         <motion.section className={styles.left} variants={fadeUp}>
           <motion.h1 variants={fadeUp}>Analyze Your Resume</motion.h1>
 
@@ -155,10 +135,7 @@ const Resume = () => {
           >
             <h3>Upload Your Resume</h3>
 
-            <motion.div
-              className={styles.dropBox}
-              whileHover={{ scale: 1.02 }}
-            >
+            <motion.div className={styles.dropBox} whileHover={{ scale: 1.02 }}>
               <p>
                 Drag & Drop your <b>PDF Resume</b> here
               </p>
@@ -221,7 +198,7 @@ const Resume = () => {
           </motion.div>
         </motion.section>
 
-        {/* ---------- RIGHT ---------- */}
+        {/* RIGHT */}
         <motion.section className={styles.right} variants={fadeUp}>
           <motion.div className={styles.reportCard}>
             <h3>ATS Report Preview</h3>
@@ -247,14 +224,10 @@ const Resume = () => {
               <div className={styles.skillTags}>
                 {resumeData?.skills?.length > 0 ? (
                   resumeData.skills.map((s, i) => (
-                    <motion.span key={s + i}>
-                      {s}
-                    </motion.span>
+                    <motion.span key={s + i}>{s}</motion.span>
                   ))
                 ) : (
-                  <span className={styles.muted}>
-                    No skills extracted yet
-                  </span>
+                  <span className={styles.muted}>No skills extracted yet</span>
                 )}
               </div>
             </div>

@@ -3,7 +3,6 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 async function extractSkillsWithAI(resumeText) {
-  // Model name ko full path ke saath likha hai
   const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
   const prompt = `
@@ -21,8 +20,6 @@ async function extractSkillsWithAI(resumeText) {
     let response = result.response.text();
 
     console.log("RAW AI RESPONSE:", response);
-
-    // 🔥 Sabse safe tarika JSON nikalne ka (Markdown backticks ignore karne ke liye)
     const jsonMatch = response.match(/\[[\s\S]*\]/);
     if (jsonMatch) {
       return JSON.parse(jsonMatch[0]);
@@ -60,14 +57,11 @@ async function analyzeJD(jdText) {
     const response = result.response.text();
 
     console.log("RAW JD AI RESPONSE:", response);
-
-    // ✅ Remove markdown backticks
     let cleaned = response
       .replace(/```json/g, "")
       .replace(/```/g, "")
       .trim();
 
-    // ✅ Extract only JSON object
     const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
 
     if (jsonMatch) {

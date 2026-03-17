@@ -6,8 +6,6 @@ exports.getDashboardData = async (userId) => {
   try {
     const objectUserId = new mongoose.Types.ObjectId(userId);
 
-    /* ---------- OVERVIEW ---------- */
-
     const totalResumes = await Resume.countDocuments({
       user: objectUserId,
     });
@@ -46,8 +44,6 @@ exports.getDashboardData = async (userId) => {
     const avgMatchPercentage = Math.round(avgMatchAgg[0]?.avg || 0);
     const bestMatch = bestMatchAgg[0]?.max || 0;
 
-    /* ---------- TREND ---------- */
-
     const trendRaw = await JobMatch.find({ user: objectUserId })
       .sort({ createdAt: 1 })
       .select("createdAt matchScore");
@@ -59,8 +55,6 @@ exports.getDashboardData = async (userId) => {
       }),
       score: m.matchScore,
     }));
-
-    /* ---------- WEAKEST SKILLS ---------- */
 
     const weakestAgg = await JobMatch.aggregate([
       { $match: { user: objectUserId } },
@@ -80,8 +74,6 @@ exports.getDashboardData = async (userId) => {
       value: Math.max(30, 100 - s.count * 10),
     }));
 
-    /* ---------- HEATMAP ---------- */
-
     const heatmapAgg = await JobMatch.aggregate([
       { $match: { user: objectUserId } },
       { $unwind: "$matchedSkills" },
@@ -100,8 +92,6 @@ exports.getDashboardData = async (userId) => {
       value: Math.min(100, 40 + h.count * 10),
     }));
 
-    /* ---------- RESUMES ---------- */
-
     const resumes = await Resume.find({ user: objectUserId });
 
     const matches = await JobMatch.find({ user: objectUserId });
@@ -112,14 +102,13 @@ exports.getDashboardData = async (userId) => {
       );
 
       return {
-        id: r._id, // 🔥 REQUIRED
+        id: r._id,
         name: r.originalFileName,
         score: r.analysis?.score || 0,
         match: match ? `${match.matchScore}%` : "—",
       };
     });
 
-    /* ---------- RECENT MATCHES ---------- */
 
     const recentMatches = matches
       .sort((a, b) => b.createdAt - a.createdAt)
@@ -129,7 +118,7 @@ exports.getDashboardData = async (userId) => {
         matchScore: m.matchScore,
       }));
 
-    /* ---------- READINESS ---------- */
+    /* READINESS */
 
     const interviewReadiness = Math.round(
       (avgResumeScore + avgMatchPercentage) / 2,

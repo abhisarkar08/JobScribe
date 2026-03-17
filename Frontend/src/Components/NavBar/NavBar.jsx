@@ -1,65 +1,65 @@
-import React, { useEffect, useRef, useState, useContext } from "react"
-import styles from "./NavBar.module.css"
-import { NavLink, useLocation, useNavigate } from "react-router-dom"
-import { HashLink } from "react-router-hash-link"
-import { User, UserCog, Trash2, LogOut } from "lucide-react"
-import { JobContext } from "../../Context/JobContext"
-import api from "../../Api/Axioscon"
+import React, { useEffect, useRef, useState, useContext } from "react";
+import styles from "./NavBar.module.css";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { HashLink } from "react-router-hash-link";
+import { User, UserCog, Trash2, LogOut } from "lucide-react";
+import { JobContext } from "../../Context/JobContext";
+import api from "../../Api/Axioscon";
 
-import { toast } from "react-toastify"
-import "react-toastify/dist/ReactToastify.css"
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const NavBar = () => {
-  const { appName } = useContext(JobContext)
-  const navigate = useNavigate()
-  const location = useLocation()
-  const isHomePage = location.pathname === "/"
+  const { appName } = useContext(JobContext);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isHomePage = location.pathname === "/";
 
-  const [open, setOpen] = useState(false)
-  const dropdownRef = useRef(null)
+  const [open, setOpen] = useState(false);
+  const dropdownRef = useRef(null);
 
   const [confirmBox, setConfirmBox] = useState({
     show: false,
-    type: "", // "logout" | "delete"
-  })
+    type: "",
+  });
 
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-        setOpen(false)
+        setOpen(false);
       }
-    }
-    document.addEventListener("mousedown", handleClickOutside)
-    return () => document.removeEventListener("mousedown", handleClickOutside)
-  }, [])
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
-  /* 🔓 LOGOUT */
+  /* LOGOUT */
   const handleLogout = async () => {
     try {
-      await api.post("/auth/logout")
-      toast.success("Logged out successfully")
-      navigate("/login")
+      await api.post("/auth/logout");
+      toast.success("Logged out successfully");
+      navigate("/");
     } catch {
-      toast.error("Logout failed")
+      toast.error("Logout failed");
     }
-  }
+  };
 
-  /* ❌ DELETE ACCOUNT */
+  /* DELETE ACCOUNT */
   const handleDeleteAccount = async () => {
     try {
-      await api.delete("/auth/delete")
-      toast.success("Account deleted")
-      navigate("/register")
+      await api.delete("/auth/delete");
+      toast.success("Account deleted");
+      navigate("/register");
     } catch {
-      toast.error("Failed to delete account")
+      toast.error("Failed to delete account");
     }
-  }
+  };
 
   const handleConfirm = () => {
-    if (confirmBox.type === "logout") handleLogout()
-    if (confirmBox.type === "delete") handleDeleteAccount()
-    setConfirmBox({ show: false, type: "" })
-  }
+    if (confirmBox.type === "logout") handleLogout();
+    if (confirmBox.type === "delete") handleDeleteAccount();
+    setConfirmBox({ show: false, type: "" });
+  };
 
   return (
     <>
@@ -77,8 +77,12 @@ const NavBar = () => {
 
           {isHomePage && (
             <div className={styles.rest}>
-              <HashLink smooth to="/#">Home</HashLink>
-              <HashLink smooth to="/#section3">About</HashLink>
+              <HashLink smooth to="/#">
+                Home
+              </HashLink>
+              <HashLink smooth to="/#section3">
+                About
+              </HashLink>
               <HashLink smooth to="/#section4">
                 Frequently Asked Questions
               </HashLink>
@@ -94,10 +98,7 @@ const NavBar = () => {
             </NavLink>
           ) : (
             <div className={styles.profileWrapper} ref={dropdownRef}>
-              <div
-                className={styles.avatar}
-                onClick={() => setOpen((p) => !p)}
-              >
+              <div className={styles.avatar} onClick={() => setOpen((p) => !p)}>
                 <User size={20} />
               </div>
 
@@ -133,7 +134,7 @@ const NavBar = () => {
         </div>
       </div>
 
-      {/* 🔔 CONFIRM POPUP */}
+      {/* POPUP */}
       {confirmBox.show && (
         <div className={styles.overlay}>
           <div className={styles.confirmBox}>
@@ -153,19 +154,15 @@ const NavBar = () => {
               <button onClick={() => setConfirmBox({ show: false, type: "" })}>
                 Cancel
               </button>
-              <button
-                className={styles.dangerBtn}
-                onClick={handleConfirm}
-              >
+              <button className={styles.dangerBtn} onClick={handleConfirm}>
                 Yes
               </button>
             </div>
           </div>
         </div>
       )}
-
     </>
-  )
-}
+  );
+};
 
-export default NavBar
+export default NavBar;

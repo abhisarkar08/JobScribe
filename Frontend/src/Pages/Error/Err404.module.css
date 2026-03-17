@@ -14,14 +14,7 @@
   font-weight: 800;
   letter-spacing: 0.08em;
   margin-bottom: 1rem;
-
-  /* 🌌 galaxy style text */
-  background-image: linear-gradient(
-    135deg,
-    #1e3a8a,
-    #2563eb,
-    #7c3aed
-  );
+  background-image: linear-gradient(135deg, #1e3a8a, #2563eb, #7c3aed);
   background-size: 200% 200%;
   background-clip: text;
   -webkit-background-clip: text;
@@ -31,9 +24,15 @@
 }
 
 @keyframes gradientMove {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 .code {
@@ -59,7 +58,9 @@
   border-radius: 2rem;
   font-size: 0.9rem;
   font-weight: 500;
-  transition: background-color 0.25s ease, transform 0.2s ease;
+  transition:
+    background-color 0.25s ease,
+    transform 0.2s ease;
 }
 
 .btn:hover {

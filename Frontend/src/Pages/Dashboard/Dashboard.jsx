@@ -1,12 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styles from "./Dashboard.module.css";
-import {
-  FileText,
-  BadgeCheck,
-  Target,
-  Trophy,
-  Trash2,
-} from "lucide-react";
+import { FileText, BadgeCheck, Target, Trophy, Trash2 } from "lucide-react";
 import api from "../../Api/Axioscon";
 import { toast } from "react-toastify";
 import {
@@ -21,7 +15,7 @@ import {
 } from "recharts";
 import { motion, AnimatePresence } from "framer-motion";
 
-/* ---------------- HELPERS ---------------- */
+/* HELPERS */
 
 const colorByValue = (v) =>
   v < 50 ? "#ef4444" : v < 70 ? "#facc15" : "#22c55e";
@@ -34,7 +28,7 @@ const getFileIcon = (filename) => {
   return <FileText size={26} color="#64748b" />;
 };
 
-/* ---------------- ANIMATIONS ---------------- */
+/* ANIMATIONS */
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -53,7 +47,7 @@ const scaleFade = {
   visible: { opacity: 1, scale: 1 },
 };
 
-/* ---------------- COMPONENT ---------------- */
+/* COMPONENT */
 
 const Dashboard = () => {
   const [stats, setStats] = useState({
@@ -75,7 +69,7 @@ const Dashboard = () => {
     id: null,
   });
 
-  /* ---------- FETCH DASHBOARD ---------- */
+  /* FETCH DASHBOARD */
   useEffect(() => {
     const fetchDashboard = async () => {
       try {
@@ -103,7 +97,7 @@ const Dashboard = () => {
     fetchDashboard();
   }, []);
 
-  /* ---------- CONFIRMED DELETE ---------- */
+  /* DELETE */
   const confirmDeleteResume = async () => {
     const id = confirmDelete.id;
     if (!id) return;
@@ -128,20 +122,36 @@ const Dashboard = () => {
   return (
     <>
       <div className={styles.page}>
-        {/* ================= STATS ================= */}
+        {/* STATS */}
         <motion.section
           className={styles.stats}
           variants={stagger}
           initial="hidden"
           animate="visible"
         >
-          <StatCard icon={<FileText />} label="Total Resumes" value={stats.totalResumes} />
-          <StatCard icon={<BadgeCheck />} label="Avg Resume Score" value={`${stats.avgResumeScore}%`} />
-          <StatCard icon={<Target />} label="Avg Match %" value={`${stats.avgMatchPercentage}%`} />
-          <StatCard icon={<Trophy />} label="Best Match" value={`${stats.bestMatch}%`} />
+          <StatCard
+            icon={<FileText />}
+            label="Total Resumes"
+            value={stats.totalResumes}
+          />
+          <StatCard
+            icon={<BadgeCheck />}
+            label="Avg Resume Score"
+            value={`${stats.avgResumeScore}%`}
+          />
+          <StatCard
+            icon={<Target />}
+            label="Avg Match %"
+            value={`${stats.avgMatchPercentage}%`}
+          />
+          <StatCard
+            icon={<Trophy />}
+            label="Best Match"
+            value={`${stats.bestMatch}%`}
+          />
         </motion.section>
 
-        {/* ================= GRID ================= */}
+        {/* GRID */}
         <motion.section
           className={styles.grid}
           variants={stagger}
@@ -149,7 +159,11 @@ const Dashboard = () => {
           animate="visible"
         >
           {/* TREND */}
-          <motion.div className={`${styles.card} ${styles.chartCard}`} variants={fadeUp} whileHover={{ y: -4 }}>
+          <motion.div
+            className={`${styles.card} ${styles.chartCard}`}
+            variants={fadeUp}
+            whileHover={{ y: -4 }}
+          >
             <h3>Match Trend Over Time</h3>
             <div className={styles.chart}>
               <ResponsiveContainer>
@@ -164,7 +178,11 @@ const Dashboard = () => {
           </motion.div>
 
           {/* WEAKEST SKILLS */}
-          <motion.div className={styles.card} variants={fadeUp} whileHover={{ y: -4 }}>
+          <motion.div
+            className={styles.card}
+            variants={fadeUp}
+            whileHover={{ y: -4 }}
+          >
             <h3>Weakest Skills</h3>
             {weakestSkills.map((s) => (
               <motion.div
@@ -175,14 +193,23 @@ const Dashboard = () => {
               >
                 <span>{s.name}</span>
                 <div className={styles.bar}>
-                  <span style={{ width: `${s.value}%`, background: colorByValue(s.value) }} />
+                  <span
+                    style={{
+                      width: `${s.value}%`,
+                      background: colorByValue(s.value),
+                    }}
+                  />
                 </div>
               </motion.div>
             ))}
           </motion.div>
 
           {/* INTERVIEW READINESS */}
-          <motion.div className={styles.card} variants={fadeUp} whileHover={{ y: -4 }}>
+          <motion.div
+            className={styles.card}
+            variants={fadeUp}
+            whileHover={{ y: -4 }}
+          >
             <h3>Interview Readiness</h3>
             <div className={styles.radialWrap}>
               <ResponsiveContainer width="100%" height={160}>
@@ -272,7 +299,7 @@ const Dashboard = () => {
         </motion.section>
       </div>
 
-      {/* 🔔 CONFIRM DELETE POPUP */}
+      {/* DELETE POPUP */}
       <AnimatePresence>
         {confirmDelete.show && (
           <motion.div
@@ -292,10 +319,15 @@ const Dashboard = () => {
               <p>Are you sure you want to delete this resume?</p>
 
               <div className={styles.actions}>
-                <button onClick={() => setConfirmDelete({ show: false, id: null })}>
+                <button
+                  onClick={() => setConfirmDelete({ show: false, id: null })}
+                >
                   Cancel
                 </button>
-                <button className={styles.dangerBtn} onClick={confirmDeleteResume}>
+                <button
+                  className={styles.dangerBtn}
+                  onClick={confirmDeleteResume}
+                >
                   Yes, Delete
                 </button>
               </div>
@@ -307,10 +339,14 @@ const Dashboard = () => {
   );
 };
 
-/* ---------------- STAT CARD ---------------- */
+/* STAT CARD */
 
 const StatCard = ({ icon, label, value }) => (
-  <motion.div className={styles.statCard} variants={fadeUp} whileHover={{ y: -6 }}>
+  <motion.div
+    className={styles.statCard}
+    variants={fadeUp}
+    whileHover={{ y: -6 }}
+  >
     <div className={styles.statIcon}>{icon}</div>
     <div>
       <p>{label}</p>
